@@ -68,7 +68,7 @@ private:
     Thread& operator=(const Thread&);
     static  int             _threadLoop(void* user);
     // always hold mLock when reading or writing
-            thread_id_t     mThread;
+            uint32_t     mThread;
     mutable Mutex           mLock;
             status_t        mStatus;
     // note that all accesses of mExitPending and mRunning need to hold mLock
