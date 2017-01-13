@@ -123,17 +123,12 @@ typedef void* (*android_pthread_entry)(void*);
 //#endif
 //}
 
-//int androidCreateRawThreadEtc(android_thread_func_t entryFunction,
-//                               void *userData,
-//                               const char* threadName __android_unused,
-//                               int32_t threadPriority,
-//                               size_t threadStackSize,
-//                               android_thread_id_t *threadId)
-//{
-//    pthread_attr_t attr; 
-//    pthread_attr_init(&attr);
-//    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-//
+int androidCreateRawThreadEtc(android_thread_func_t entryFunction,void *userData, const char* threadName __android_unused, int32_t threadPriority,  size_t threadStackSize, android_thread_id_t *threadId)
+{
+    pthread_attr_t attr; 
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+
 //#ifdef HAVE_ANDROID_OS  /* valgrind is rejecting RT-priority create reqs */
 // //   if (threadPriority != PRIORITY_DEFAULT || threadName != NULL) {
 // //       // Now that the pthread_t has a method to find the associated
@@ -152,32 +147,35 @@ typedef void* (*android_pthread_entry)(void*);
 // //       userData = t;            
 // //   }
 //#endif
-//
-//    if (threadStackSize) {
-//        pthread_attr_setstacksize(&attr, threadStackSize);
-//    }
-//    
-//    errno = 0;
-//    pthread_t thread;
-//    int result = pthread_create(&thread, &attr,
-//                    (android_pthread_entry)entryFunction, userData);
-//    pthread_attr_destroy(&attr);
-//    if (result != 0) {
+
+    if (threadStackSize) {
+        pthread_attr_setstacksize(&attr, threadStackSize);
+    }
+    
+    errno = 0;
+    pthread_t thread;
+    int result = pthread_create(&thread, &attr,
+                    (android_pthread_entry)entryFunction, userData);
+    pthread_attr_destroy(&attr);
+    if (result != 0) {
 //        ALOGE("androidCreateRawThreadEtc failed (entry=%p, res=%d, errno=%d)\n"
 //             "(android threadPriority=%d)",
 //            entryFunction, result, errno, threadPriority);
-//        return 0;
-//    }
-//
-//    // Note that *threadID is directly available to the parent only, as it is
-//    // assigned after the child starts.  Use memory barrier / lock if the child
-//    // or other threads also need access.
-//    if (threadId != NULL) {
-//        *threadId = (android_thread_id_t)thread; // XXX: this is not portable
-//    }
-//    return 1;
-//}
-//
+        return 0;
+    }
+
+    // Note that *threadID is directly available to the parent only, as it is
+    // assigned after the child starts.  Use memory barrier / lock if the child
+    // or other threads also need access.
+    if (threadId != NULL) {
+        *threadId = (android_thread_id_t)thread; // XXX: this is not portable
+    }
+    return 1;
+}
+android_thread_id_t getThreadId()
+{
+    return (android_thread_id_t)pthread_self();
+}
 //#ifdef HAVE_ANDROID_OS
 ////static pthread_t android_thread_id_t_to_pthread(android_thread_id_t thread)
 ////{
@@ -416,7 +414,7 @@ status_t Thread::run(const char* name, int32_t priority, size_t stack)
     // try again after an error happened (either below, or in readyToRun())
     mStatus = NO_ERROR;
     mExitPending = false;
-    mThread = thread_id_t(-1);
+    //mThread = thread_id_t(-1);
     
     // hold a strong reference on ourself
     //mHoldSelf = this;
@@ -425,17 +423,17 @@ status_t Thread::run(const char* name, int32_t priority, size_t stack)
 
     bool res;
     if (mCanCallJava) {
-        res = createThreadEtc(_threadLoop,
-                this, name, priority, stack, &mThread);
-    } else {
-//        res = androidCreateRawThreadEtc(_threadLoop,
+//        res = createThreadEtc(_threadLoop,
 //                this, name, priority, stack, &mThread);
+    } else {
+        res = androidCreateRawThreadEtc(_threadLoop,		\
+                this, name, priority, stack, &mThread);
     }
     
     if (res == false) {
         mStatus = UNKNOWN_ERROR;   // something happened!
         mRunning = false;
-        mThread = thread_id_t(-1);
+        //mThread = thread_id_t(-1);
         //mHoldSelf.clear();  // "this" may have gone away after this.
 
         return UNKNOWN_ERROR;
@@ -497,7 +495,7 @@ int Thread::_threadLoop(void* user)
             self->mRunning = false;
             // clear thread ID so that requestExitAndWait() does not exit if
             // called by a new thread using the same thread ID as this one.
-            self->mThread = thread_id_t(-1);
+            //self->mThread = thread_id_t(-1);
             // note that interested observers blocked in requestExitAndWait are
             // awoken by broadcast, but blocked on mLock until break exits scope
             self->mThreadExitedCondition.broadcast();
@@ -507,10 +505,11 @@ int Thread::_threadLoop(void* user)
         
         // Release our strong reference, to let a chance to the thread
         // to die a peaceful death.
-        strong.clear();
+//        strong.clear();
         // And immediately, re-acquire a strong reference for the next loop
-        strong = weak.promote();
-    } while(strong != 0);
+ //       strong = weak.promote();
+    //} while(strong != 0);
+    } while(1);
     
     return 0;
 }
@@ -525,10 +524,10 @@ status_t Thread::requestExitAndWait()
 {
     Mutex::Autolock _l(mLock);
     if (mThread == getThreadId()) {
-        ALOGW(
-        "Thread (this=%p): don't call waitForExit() from this "
-        "Thread object's thread. It's a guaranteed deadlock!",
-        this);
+//        ALOGW(
+//        "Thread (this=%p): don't call waitForExit() from this "
+//        "Thread object's thread. It's a guaranteed deadlock!",
+//        this);
 
         return WOULD_BLOCK;
     }
@@ -549,10 +548,10 @@ status_t Thread::join()
 {
     Mutex::Autolock _l(mLock);
     if (mThread == getThreadId()) {
-        ALOGW(
-        "Thread (this=%p): don't call join() from this "
-        "Thread object's thread. It's a guaranteed deadlock!",
-        this);
+//        ALOGW(
+//        "Thread (this=%p): don't call join() from this "
+//        "Thread object's thread. It's a guaranteed deadlock!",
+//        this);
 
         return WOULD_BLOCK;
     }

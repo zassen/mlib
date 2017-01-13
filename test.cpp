@@ -1,6 +1,7 @@
 #include "Debug.h"
 #include "Condition.h"
 #include "Mutex.h"
+#include "Thread.h"
 
 DEBUG_SET_LEVEL(DEBUG_LEVEL_ERROR);
 using namespace std;
