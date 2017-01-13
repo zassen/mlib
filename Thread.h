@@ -105,7 +105,7 @@ private:
     // note that all accesses of mExitPending and mRunning need to hold mLock
     volatile bool           mExitPending;
     volatile bool           mRunning;
-            sp<Thread>      mHoldSelf;
+            //sp<Thread>      mHoldSelf;
 #ifdef HAVE_ANDROID_OS
     // legacy for debugging, not used by getTid() as it is set by the child thread
     // and so is not initialized until the child reaches that point
