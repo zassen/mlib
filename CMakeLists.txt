@@ -1,0 +1,7 @@
+PROJECT(test)
+INCLUDE_DIRECTORIES(.)
+#AUX_SOURCE_DIRECTORY(.)
+add_definitions(-DHAVE_PTHREADS)
+#set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-pthread")
+add_executable(test test.cpp Threads.cpp)
+target_link_libraries(test -lpthread)
