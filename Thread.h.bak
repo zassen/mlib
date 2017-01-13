@@ -1,58 +1,31 @@
-/*
- * Copyright (C) 2007 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
-#ifndef _LIBS_UTILS_THREAD_H
-#define _LIBS_UTILS_THREAD_H
+#ifndef _THREAD_H_
+#define _THREAD_H_
 
 #include <stdint.h>
 #include <sys/types.h>
 #include <time.h>
 
-#if defined(HAVE_PTHREADS)
+#if !defined(_WIN32)
 # include <pthread.h>
 #endif
 
-#include "Condition.h"
-#include "Errors.h"
-#include "Mutex.h"
-//#include <utils/RefBase.h>
-#include "Timers.h"
-//#include <utils/ThreadDefs.h>
+#include <Errors.h>
 
 // ---------------------------------------------------------------------------
-namespace mlib {
 // ---------------------------------------------------------------------------
-typedef void* android_thread_id_t;
-typedef android_thread_id_t thread_id_t;
-typedef int (*android_thread_func_t)(void*);
-typedef android_thread_func_t thread_func_t;
 
-
-class Thread  
+class Thread
 {
 public:
     // Create a Thread object, but doesn't create or start the associated
     // thread. See the run() method.
-                        Thread(bool canCallJava = true);
     virtual             ~Thread();
 
     // Start the thread in threadLoop() which needs to be implemented.
-    virtual status_t    run(    const char* name = 0,
-                                int32_t priority = PRIORITY_DEFAULT,
-                                size_t stack = 0);
+    virtual status_t    run(    const char* name,);
+                           //     int32_t priority = PRIORITY_DEFAULT,
+                            //    size_t stack = 0);
     
     // Ask this object's thread to exit. This function is asynchronous, when the
     // function returns the thread might still be running. Of course, this
@@ -66,20 +39,18 @@ public:
     // BE VERY CAREFUL of deadlocks. In particular, it would be silly to call
     // this function from this object's thread. Will return WOULD_BLOCK in
     // that case.
-            status_t    requestExitAndWait();
+    status_t    requestExitAndWait();
 
     // Wait until this object's thread exits. Returns immediately if not yet running.
     // Do not call from this object's thread; will return WOULD_BLOCK in that case.
-            status_t    join();
+    status_t    join();
 
     // Indicates whether this thread is running or not.
-            bool        isRunning() const;
+    bool        isRunning() const;
 
-#ifdef HAVE_ANDROID_OS
-    // Return the thread's kernel ID, same as the thread itself calling gettid() or
-    // androidGetTid(), or -1 if the thread is not running.
-            pid_t       getTid() const;
-#endif
+    // Return the thread's kernel ID, same as the thread itself calling gettid(),
+    // or -1 if the thread is not running.
+            uint32_t       getTid() const;
 
 protected:
     // exitPending() returns true if requestExit() has been called.
@@ -96,26 +67,19 @@ private:
 private:
     Thread& operator=(const Thread&);
     static  int             _threadLoop(void* user);
-    const   bool            mCanCallJava;
     // always hold mLock when reading or writing
-            thread_id_t     mThread;
+            uint32_t     mThread;
     mutable Mutex           mLock;
-            Condition       mThreadExitedCondition;
             status_t        mStatus;
     // note that all accesses of mExitPending and mRunning need to hold mLock
     volatile bool           mExitPending;
     volatile bool           mRunning;
-            sp<Thread>      mHoldSelf;
-#ifdef HAVE_ANDROID_OS
-    // legacy for debugging, not used by getTid() as it is set by the child thread
-    // and so is not initialized until the child reaches that point
-            pid_t           mTid;
-#endif
+	    Thread	    *mHoldSelf;
+            uint32_t           mTid;
 };
 
 
-}; // namespace android
 
 // ---------------------------------------------------------------------------
-#endif // _LIBS_UTILS_THREAD_H
-// ---------------------------------------------------------------------------
+#endif // _THREAD_H_
+// -------------------------------------------------------------------------
