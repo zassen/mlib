@@ -422,13 +422,13 @@ status_t Thread::run(const char* name, int32_t priority, size_t stack)
     mRunning = true;
 
     bool res;
-    if (mCanCallJava) {
+//    if (mCanCallJava) {
 //        res = createThreadEtc(_threadLoop,
 //                this, name, priority, stack, &mThread);
-    } else {
+//    } else {
         res = androidCreateRawThreadEtc(_threadLoop,		\
                 this, name, priority, stack, &mThread);
-    }
+//    }
     
     if (res == false) {
         mStatus = UNKNOWN_ERROR;   // something happened!
