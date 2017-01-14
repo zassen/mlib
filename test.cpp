@@ -3,7 +3,7 @@
 #include "Mutex.h"
 #include "Thread.h"
 
-DEBUG_SET_LEVEL(DEBUG_LEVEL_ERROR);
+DEBUG_SET_LEVEL(DEBUG_LEVEL_INFO);
 
 
 
@@ -40,7 +40,10 @@ int main(void){
 	t t1;
 	t1.run("t",44);
 	ERROR("i= %d",i);
-	sleep(20);
+	sleep(10);
+	INFO("send exit t1 thread request");
+	t1.requestExitAndWait();
+//	sleep(10);
 	ASSERT("error_status:%d",a);
 	return 0;
 }

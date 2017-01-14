@@ -498,6 +498,8 @@ int Thread::_threadLoop(void* user)
             //self->mThread = thread_id_t(-1);
             // note that interested observers blocked in requestExitAndWait are
             // awoken by broadcast, but blocked on mLock until break exits scope
+	    printf("wait 5s for test\n");
+	    sleep(5);//test code
             self->mThreadExitedCondition.broadcast();
             break;
         }
@@ -540,7 +542,7 @@ status_t Thread::requestExitAndWait()
     // This next line is probably not needed any more, but is being left for
     // historical reference. Note that each interested party will clear flag.
     mExitPending = false;
-
+printf("get thread exit signal \n");
     return mStatus;
 }
 
