@@ -524,15 +524,16 @@ void Thread::requestExit()
 status_t Thread::requestExitAndWait()
 {
     Mutex::Autolock _l(mLock);
+    DEBUG("getThreadId=%p",getThreadId()) ;
     if (mThread == getThreadId()) {
-//        ALOGW(
-//        "Thread (this=%p): don't call waitForExit() from this "
-//        "Thread object's thread. It's a guaranteed deadlock!",
-//        this);
+        ERROR(
+        "Thread (this=%p): don't call waitForExit() from this "
+        "Thread object's thread. It's a guaranteed deadlock!",
+        this);
 
         return WOULD_BLOCK;
     }
-    
+    DEBUG("mThread=%p",mThread) ;
     mExitPending = true;
 
     while (mRunning == true) {
@@ -549,10 +550,10 @@ status_t Thread::join()
 {
     Mutex::Autolock _l(mLock);
     if (mThread == getThreadId()) {
-//        ALOGW(
-//        "Thread (this=%p): don't call join() from this "
-//        "Thread object's thread. It's a guaranteed deadlock!",
-//        this);
+        ERROR(
+        "Thread (this=%p): don't call join() from this "
+        "Thread object's thread. It's a guaranteed deadlock!",
+        this);
 
         return WOULD_BLOCK;
     }

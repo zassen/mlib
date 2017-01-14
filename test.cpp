@@ -26,9 +26,19 @@ virtual bool threadLoop();
 bool t::threadLoop(){
 
 
-	DEBUG("t thread is alive \n");
+	DEBUG("t thread is alive 1\n");
 	sleep(1);
-	return 1;
+	DEBUG("t thread is alive 2\n");
+	sleep(1);
+	DEBUG("t thread is alive 3\n");
+	sleep(1);
+	DEBUG("t thread is alive 4\n");
+	sleep(1);
+	DEBUG("t thread is alive 5\n");
+	sleep(1);
+	DEBUG("t thread is alive 6\n");
+	sleep(1);
+	return 0;
 
 };
 
@@ -39,11 +49,13 @@ int main(void){
 	int i = 10;
 	t t1;
 	t1.run("t",44);
+	t1.join();
 	ERROR("i= %d",i);
 	sleep(10);
 	INFO("send exit t1 thread request");
-	t1.requestExitAndWait();
-//	sleep(10);
+	//INFO("t1.requestExitAndWait()= %d",t1.requestExitAndWait());
+	//t1.requestExit();
+	sleep(10);
 	ASSERT("error_status:%d",a);
 	return 0;
 }
