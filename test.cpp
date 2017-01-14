@@ -3,7 +3,7 @@
 #include "Mutex.h"
 #include "Thread.h"
 
-DEBUG_SET_LEVEL(DEBUG_LEVEL_INFO);
+//DEBUG_SET_LEVEL(DEBUG_LEVEL_INFO);
 
 
 
@@ -26,7 +26,7 @@ virtual bool threadLoop();
 bool t::threadLoop(){
 
 
-	printf("t thread is alive \n");
+	DEBUG("t thread is alive \n");
 	sleep(1);
 	return 1;
 

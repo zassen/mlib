@@ -15,8 +15,7 @@
  */
 
 // #define LOG_NDEBUG 0
-#define LOG_TAG "libutils.threads"
-
+#include "Debug.h"
 #include <assert.h>
 #include <errno.h>
 #include <memory.h>
@@ -542,7 +541,7 @@ status_t Thread::requestExitAndWait()
     // This next line is probably not needed any more, but is being left for
     // historical reference. Note that each interested party will clear flag.
     mExitPending = false;
-printf("get thread exit signal \n");
+	DEBUG("get thread exit signal \n");
     return mStatus;
 }
 

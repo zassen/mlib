@@ -16,25 +16,31 @@ enum debug_level{
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+static char date[30];
+inline static char * getDate(void){
 
-char strdate[30]={0};
-static char * getDate(char *date){
+
 	memset(date,0,30);
 	time_t timer ;
 	struct tm* timeinfo;
 	time(&timer);
 	timeinfo = localtime(&timer);
-	strftime(date,29,"%Y-%m-%d-%T",localtime(&timer));
+	strftime(date,29,"%Y%m%d-%T",localtime(&timer));
 	return date;
+
+
+
+
 }
 #define PRINT printf
+#define __FILENAME__ (__FILE__ + SOURCE_PATH_SIZE)
 
 #define DEBUG_SET_LEVEL(x) static int debug = x
 
 #define ASSERT(fmt,...)				\
 						\
 do{						\
-	PRINT("%s, ASSERT:%s:%s:%d ::" fmt"\n",getDate(strdate),__FILE__,__FUNCTION__,__LINE__,##__VA_ARGS__);\
+	PRINT("%s  ASSERT@%s:%s:%d>>" fmt"\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);\
 	while(1)				\
 	{					\
 		exit(-1);			\
@@ -44,21 +50,21 @@ do{						\
 #define ERROR(fmt,...)				\
 do {						\
 	if(debug >= DEBUG_LEVEL_ERROR){		\
-	PRINT("%s, ERROR:%s:%s:%d ::" fmt "\n",getDate(strdate),__FILE__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
+	PRINT("%s  ERROR@%s:%s:%d>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
 	}					\
 }while(0)
 
 #define INFO(fmt,...)				\
 do {						\
 	if(debug >= DEBUG_LEVEL_INFO){		\
-	PRINT("%s,INFO:%s:%s:%d ::" fmt "\n",getDate(strdate),__FILE__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
+	PRINT("%s  INFO@%s:%s:%d>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
 	}					\
 }while(0)
 
 #define DEBUG(fmt,...)				\
 do {						\
 	if(debug >= DEBUG_LEVEL_DEBUG){		\
-	PRINT("%s,DEBUG:%s:%s:%d ::" fmt "\n",getDate(strdate),__FILE__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
+	PRINT("%s  DEBUG@%s:%s:%d>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
 	}					\
 }while(0)
 
@@ -71,5 +77,7 @@ do {						\
 #define DEBUG(fmt,...)
 
 #endif /*CONFIG_DEBUG_ENABLE*/
+
+DEBUG_SET_LEVEL(DEBUG_LEVEL_DEBUG);
 
 #endif /*_DEBUG_H_*/
