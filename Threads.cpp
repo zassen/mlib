@@ -70,7 +70,7 @@
  * We create it "detached", so it cleans up after itself.
  */
 
-typedef void* (*android_pthread_entry)(void*);
+typedef void* (*_pthread_entry)(void*);
 
 //struct thread_data_t {
 //    thread_func_t   entryFunction;
@@ -122,7 +122,7 @@ typedef void* (*android_pthread_entry)(void*);
 //#endif
 //}
 
-int androidCreateRawThreadEtc(android_thread_func_t entryFunction,void *userData, const char* threadName __android_unused, int32_t threadPriority,  size_t threadStackSize, android_thread_id_t *threadId)
+int CreateRawThreadEtc(_thread_func_t entryFunction,void *userData, const char* threadName __android_unused, int32_t threadPriority,  size_t threadStackSize, _thread_id_t *threadId)
 {
     pthread_attr_t attr; 
     pthread_attr_init(&attr);
@@ -131,7 +131,7 @@ int androidCreateRawThreadEtc(android_thread_func_t entryFunction,void *userData
 //#ifdef HAVE_ANDROID_OS  /* valgrind is rejecting RT-priority create reqs */
 // //   if (threadPriority != PRIORITY_DEFAULT || threadName != NULL) {
 // //       // Now that the pthread_t has a method to find the associated
-// //       // android_thread_id_t (pid) from pthread_t, it would be possible to avoid
+// //       // _thread_id_t (pid) from pthread_t, it would be possible to avoid
 // //       // this trampoline in some cases as the parent could set the properties
 // //       // for the child.  However, there would be a race condition because the
 // //       // child becomes ready immediately, and it doesn't work for the name.
@@ -142,7 +142,7 @@ int androidCreateRawThreadEtc(android_thread_func_t entryFunction,void *userData
 // //       t->threadName = threadName ? strdup(threadName) : NULL;
 // //       t->entryFunction = entryFunction;
 // //       t->userData = userData;
-// //       entryFunction = (android_thread_func_t)&thread_data_t::trampoline;
+// //       entryFunction = (_thread_func_t)&thread_data_t::trampoline;
 // //       userData = t;            
 // //   }
 //#endif
@@ -154,10 +154,10 @@ int androidCreateRawThreadEtc(android_thread_func_t entryFunction,void *userData
     errno = 0;
     pthread_t thread;
     int result = pthread_create(&thread, &attr,
-                    (android_pthread_entry)entryFunction, userData);
+                    (_pthread_entry)entryFunction, userData);
     pthread_attr_destroy(&attr);
     if (result != 0) {
-//        ALOGE("androidCreateRawThreadEtc failed (entry=%p, res=%d, errno=%d)\n"
+//        ALOGE("CreateRawThreadEtc failed (entry=%p, res=%d, errno=%d)\n"
 //             "(android threadPriority=%d)",
 //            entryFunction, result, errno, threadPriority);
         return 0;
@@ -167,24 +167,24 @@ int androidCreateRawThreadEtc(android_thread_func_t entryFunction,void *userData
     // assigned after the child starts.  Use memory barrier / lock if the child
     // or other threads also need access.
     if (threadId != NULL) {
-        *threadId = (android_thread_id_t)thread; // XXX: this is not portable
+        *threadId = (_thread_id_t)thread; // XXX: this is not portable
     }
     return 1;
 }
-android_thread_id_t getThreadId()
+_thread_id_t getThreadId()
 {
-    return (android_thread_id_t)pthread_self();
+    return (_thread_id_t)pthread_self();
 }
 //#ifdef HAVE_ANDROID_OS
-////static pthread_t android_thread_id_t_to_pthread(android_thread_id_t thread)
+////static pthread_t _thread_id_t_to_pthread(_thread_id_t thread)
 ////{
 ////    return (pthread_t) thread;
 ////}
 //#endif
 //
-//android_thread_id_t androidGetThreadId()
+//_thread_id_t androidGetThreadId()
 //{
-//    return (android_thread_id_t)pthread_self();
+//    return (_thread_id_t)pthread_self();
 //}
 //
 //// ----------------------------------------------------------------------------
@@ -216,7 +216,7 @@ android_thread_id_t getThreadId()
 /////*
 //// * Create and run a new thread.
 //// */
-////static bool doCreateThread(android_thread_func_t fn, void* arg, android_thread_id_t *id)
+////static bool doCreateThread(_thread_func_t fn, void* arg, _thread_id_t *id)
 ////{
 ////    HANDLE hThread;
 ////    struct threadDetails* pDetails = new threadDetails; // must be on heap
@@ -246,25 +246,25 @@ android_thread_id_t getThreadId()
 ////#endif
 ////
 ////    if (id != NULL) {
-////      	*id = (android_thread_id_t)thrdaddr;
+////      	*id = (_thread_id_t)thrdaddr;
 ////    }
 ////
 ////    return true;
 ////}
 ////
-////int androidCreateRawThreadEtc(android_thread_func_t fn,
+////int CreateRawThreadEtc(_thread_func_t fn,
 ////                               void *userData,
 ////                               const char* /*threadName*/,
 ////                               int32_t /*threadPriority*/,
 ////                               size_t /*threadStackSize*/,
-////                               android_thread_id_t *threadId)
+////                               _thread_id_t *threadId)
 ////{
 ////    return doCreateThread(  fn, userData, threadId);
 ////}
 ////
-////android_thread_id_t androidGetThreadId()
+////_thread_id_t androidGetThreadId()
 ////{
-////    return (android_thread_id_t)GetCurrentThreadId();
+////    return (_thread_id_t)GetCurrentThreadId();
 ////}
 ////
 ////// ----------------------------------------------------------------------------
@@ -274,25 +274,25 @@ android_thread_id_t getThreadId()
 //
 //// ----------------------------------------------------------------------------
 //
-//int androidCreateThread(android_thread_func_t fn, void* arg)
+//int androidCreateThread(_thread_func_t fn, void* arg)
 //{
 //    return createThreadEtc(fn, arg);
 //}
 //
-//int androidCreateThreadGetID(android_thread_func_t fn, void *arg, android_thread_id_t *id)
+//int androidCreateThreadGetID(_thread_func_t fn, void *arg, _thread_id_t *id)
 //{
 //    return createThreadEtc(fn, arg, "android:unnamed_thread",
 //                           PRIORITY_DEFAULT, 0, id);
 //}
 //
-//static android_create_thread_fn gCreateThreadFn = androidCreateRawThreadEtc;
+//static android_create_thread_fn gCreateThreadFn = CreateRawThreadEtc;
 //
-//int androidCreateThreadEtc(android_thread_func_t entryFunction,
+//int androidCreateThreadEtc(_thread_func_t entryFunction,
 //                            void *userData,
 //                            const char* threadName,
 //                            int32_t threadPriority,
 //                            size_t threadStackSize,
-//                            android_thread_id_t *threadId)
+//                            _thread_id_t *threadId)
 //{
 //    return gCreateThreadFn(entryFunction, userData, threadName,
 //        threadPriority, threadStackSize, threadId);
@@ -420,7 +420,7 @@ status_t Thread::run(const char* name, int32_t priority, size_t stack)
     mRunning = true;
 
     bool res;
-        res = androidCreateRawThreadEtc(_threadLoop,		\
+        res = CreateRawThreadEtc(_threadLoop,		\
                 this, name, priority, stack, &mThread);
     
     if (res == false) {
@@ -504,7 +504,7 @@ int Thread::_threadLoop(void* user)
         // And immediately, re-acquire a strong reference for the next loop
  //       strong = weak.promote();
     //} while(strong != 0);
-    } while(1);
+    } while(self->mThread!=0);
     
     return 0;
 }
@@ -518,6 +518,7 @@ void Thread::requestExit()
 status_t Thread::requestExitAndWait()
 {
     Mutex::Autolock _l(mLock);
+    DEBUG("mThread=%p",mThread) ;
     DEBUG("getThreadId=%p",getThreadId()) ;
     if (mThread == getThreadId()) {
         ERROR(
@@ -527,7 +528,6 @@ status_t Thread::requestExitAndWait()
 
         return WOULD_BLOCK;
     }
-    DEBUG("mThread=%p",mThread) ;
     mExitPending = true;
 
     while (mRunning == true) {
@@ -543,6 +543,8 @@ status_t Thread::requestExitAndWait()
 status_t Thread::join()
 {
     Mutex::Autolock _l(mLock);
+    DEBUG("mThread=%p",mThread) ;
+    DEBUG("getThreadId=%p",getThreadId()) ;
     if (mThread == getThreadId()) {
         ERROR(
         "Thread (this=%p): don't call join() from this "
@@ -571,7 +573,7 @@ bool Thread::isRunning() const {
 //    Mutex::Autolock _l(mLock);
 //    pid_t tid;
 //    if (mRunning) {
-//        pthread_t pthread = android_thread_id_t_to_pthread(mThread);
+//        pthread_t pthread = _thread_id_t_to_pthread(mThread);
 //        tid = __pthread_gettid(pthread);
 //    } else {
 //        ALOGW("Thread (this=%p): getTid() is undefined before run()", this);

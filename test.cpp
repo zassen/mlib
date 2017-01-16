@@ -43,12 +43,18 @@ bool t::threadLoop(){
 };
 
 class t;
+typedef void* tx;
+typedef tx tx1;
 int main(void){
 	status_t a=NO_ERROR;
 	Mutex mlock;
+	tx1 *id;
 	int i = 10;
+//	*id = (tx1) i;
+	//INFO("id %x , i %x ,*id %x",id,i,*id);
 	t t1;
 	t1.run("t",44);
+	INFO("test process id %lx",pthread_self());
 	t1.join();
 	ERROR("i= %d",i);
 	sleep(10);

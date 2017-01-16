@@ -32,10 +32,10 @@
 #include "Timers.h"
 //#include <utils/ThreadDefs.h>
 
-typedef void* android_thread_id_t;
-typedef android_thread_id_t thread_id_t;
-typedef int (*android_thread_func_t)(void*);
-typedef android_thread_func_t thread_func_t;
+typedef void* _thread_id_t;
+typedef _thread_id_t thread_id_t;
+typedef int (*_thread_func_t)(void*);
+typedef _thread_func_t thread_func_t;
 // ---------------------------------------------------------------------------
 namespace mlib {
 // ---------------------------------------------------------------------------
