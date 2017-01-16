@@ -379,9 +379,8 @@ namespace mlib {
  * This is our thread object!
  */
 
-Thread::Thread(bool canCallJava)
-    :   mCanCallJava(canCallJava),
-        mThread(thread_id_t(-1)),
+Thread::Thread()
+      : mThread(thread_id_t(-1)),
         mLock("Thread::mLock"),
         mStatus(NO_ERROR),
         mExitPending(false), mRunning(false)
@@ -421,13 +420,8 @@ status_t Thread::run(const char* name, int32_t priority, size_t stack)
     mRunning = true;
 
     bool res;
-//    if (mCanCallJava) {
-//        res = createThreadEtc(_threadLoop,
-//                this, name, priority, stack, &mThread);
-//    } else {
         res = androidCreateRawThreadEtc(_threadLoop,		\
                 this, name, priority, stack, &mThread);
-//    }
     
     if (res == false) {
         mStatus = UNKNOWN_ERROR;   // something happened!
