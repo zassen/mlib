@@ -122,7 +122,7 @@ typedef void* (*_pthread_entry)(void*);
 //#endif
 //}
 
-int CreateRawThreadEtc(_thread_func_t entryFunction,void *userData, const char* threadName __android_unused, int32_t threadPriority,  size_t threadStackSize, _thread_id_t *threadId)
+int createRawThreadEtc(_thread_func_t entryFunction,void *userData, const char* threadName __android_unused,  size_t threadStackSize, _thread_id_t *threadId)
 {
     pthread_attr_t attr; 
     pthread_attr_init(&attr);
@@ -157,9 +157,6 @@ int CreateRawThreadEtc(_thread_func_t entryFunction,void *userData, const char* 
                     (_pthread_entry)entryFunction, userData);
     pthread_attr_destroy(&attr);
     if (result != 0) {
-//        ALOGE("CreateRawThreadEtc failed (entry=%p, res=%d, errno=%d)\n"
-//             "(android threadPriority=%d)",
-//            entryFunction, result, errno, threadPriority);
         return 0;
     }
 
@@ -252,7 +249,7 @@ _thread_id_t getThreadId()
 ////    return true;
 ////}
 ////
-////int CreateRawThreadEtc(_thread_func_t fn,
+////int createRawThreadEtc(_thread_func_t fn,
 ////                               void *userData,
 ////                               const char* /*threadName*/,
 ////                               int32_t /*threadPriority*/,
@@ -285,7 +282,7 @@ _thread_id_t getThreadId()
 //                           PRIORITY_DEFAULT, 0, id);
 //}
 //
-//static android_create_thread_fn gCreateThreadFn = CreateRawThreadEtc;
+//static android_create_thread_fn gCreateThreadFn = createRawThreadEtc;
 //
 //int androidCreateThreadEtc(_thread_func_t entryFunction,
 //                            void *userData,
@@ -420,8 +417,8 @@ status_t Thread::run(const char* name, int32_t priority, size_t stack)
     mRunning = true;
 
     bool res;
-        res = CreateRawThreadEtc(_threadLoop,		\
-                this, name, priority, stack, &mThread);
+        res = createRawThreadEtc(_threadLoop,		\
+                this, name, stack, &mThread);
     
     if (res == false) {
         mStatus = UNKNOWN_ERROR;   // something happened!
