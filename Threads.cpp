@@ -122,7 +122,7 @@ typedef void* (*_pthread_entry)(void*);
 //#endif
 //}
 
-int createRawThreadEtc(_thread_func_t entryFunction,void *userData, const char* threadName __android_unused,  size_t threadStackSize, _thread_id_t *threadId)
+int createRawThreadEtc(_thread_func_t entryFunction,void *userData,  size_t threadStackSize, _thread_id_t *threadId)
 {
     pthread_attr_t attr; 
     pthread_attr_init(&attr);
@@ -396,7 +396,7 @@ status_t Thread::readyToRun()
     return NO_ERROR;
 }
 
-status_t Thread::run(const char* name, int32_t priority, size_t stack)
+status_t Thread::run( size_t stack)
 {
     Mutex::Autolock _l(mLock);
 
@@ -418,7 +418,7 @@ status_t Thread::run(const char* name, int32_t priority, size_t stack)
 
     bool res;
         res = createRawThreadEtc(_threadLoop,		\
-                this, name, stack, &mThread);
+                this,  stack, &mThread);
     
     if (res == false) {
         mStatus = UNKNOWN_ERROR;   // something happened!

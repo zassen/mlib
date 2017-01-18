@@ -53,7 +53,7 @@ int main(void){
 //	*id = (tx1) i;
 	//INFO("id %x , i %x ,*id %x",id,i,*id);
 	t t1;
-	t1.run("t",44);
+	t1.run();
 	INFO("test process id %lx",pthread_self());
 	t1.join();
 	ERROR("i= %d",i);
