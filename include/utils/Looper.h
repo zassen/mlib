@@ -17,14 +17,14 @@
 #ifndef UTILS_LOOPER_H
 #define UTILS_LOOPER_H
 
-//#include <utils/threads.h>
-//#include <utils/RefBase.h>
+#include <utils/threads.h>
+#include <utils/RefBase.h>
 #include <utils/KeyedVector.h>
 #include <utils/Timers.h>
 
 #include <sys/epoll.h>
 
-namespace mlib {
+namespace android {
 
 /*
  * NOTE: Since Looper is used to implement the NDK ALooper, the Looper

@@ -13,7 +13,7 @@
 // Debugs callback registration and invocation.
 #define DEBUG_CALLBACKS 0
 
-//#include <cutils/log.h>
+#include <cutils/log.h>
 #include <utils/Looper.h>
 #include <utils/Timers.h>
 
@@ -22,7 +22,7 @@
 #include <limits.h>
 
 
-namespace mlib {
+namespace android {
 
 // --- WeakMessageHandler ---
 
