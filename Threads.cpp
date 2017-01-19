@@ -41,7 +41,7 @@
 #include <sys/prctl.h>
 #endif
 
-#include "Thread.h"
+#include <utils/Thread.h>
 //#include <utils/Log.h>
 
 //#include <cutils/sched_policy.h>

@@ -40,7 +40,7 @@ typedef int (*android_thread_func_t)(void*);
 // ---------------------------------------------------------------------------
 // C++ API
 #ifdef __cplusplus
-namespace android {
+namespace mlib {
 // ---------------------------------------------------------------------------
 
 typedef android_thread_id_t thread_id_t;

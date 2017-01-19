@@ -1,7 +1,7 @@
 #include "Debug.h"
 #include "Condition.h"
 #include "Mutex.h"
-#include "Thread.h"
+#include <utils/Thread.h>
 
 //DEBUG_SET_LEVEL(DEBUG_LEVEL_INFO);
 
