@@ -50,6 +50,10 @@ int main(void){
 	Mutex mlock;
 	tx1 *id;
 	int i = 10;
+	uint8_t data[]="Im message";
+	Message msg ;
+	msg.setData(data,sizeof(data));
+	DEBUG("Msg data %s",msg.mData);
 	MessageTest(Message(10));
 //	*id = (tx1) i;
 	//INFO("id %x , i %x ,*id %x",id,i,*id);

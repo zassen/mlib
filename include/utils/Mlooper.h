@@ -4,7 +4,8 @@
 #include <Debug.h>
 #include <utils/KeyedVector.h>
 #include <utils/Timers.h>
-
+#include <string>
+using namespace std;
 namespace mlib{
 
 
@@ -12,9 +13,22 @@ namespace mlib{
 
 struct Message{
 
-	Message():what(0){}
-	Message(int w):what(w) {}
-	int what;
+	Message():mWhat(0){}
+	Message(int what):mWhat(what) {}
+	Message(string str):mStr(str){}
+void 	setData(uint8_t *data,int len){
+		memset(&mData,0,128);
+		if(data != NULL){
+
+			memcpy(&mData,data,len);
+
+		}
+	}
+	int mWhat;
+	string mStr;
+	uint8_t mData[128];
+
+	
 
 };
 
@@ -22,8 +36,9 @@ int MessageTest(const Message &msg)
 {
 
 
-	DEBUG("msg.what=%d",msg.what);
+	DEBUG("msg.what=%d",msg.mWhat);
 
+	
 
 }
 
