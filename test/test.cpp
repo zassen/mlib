@@ -1,10 +1,10 @@
-#include "Debug.h"
-#include "Condition.h"
-#include "Mutex.h"
+#include <Debug.h>
+#include <utils/Condition.h>
+#include <utils/Mutex.h>
 #include <utils/Thread.h>
+#include <utils/Mlooper.h>
 
 //DEBUG_SET_LEVEL(DEBUG_LEVEL_INFO);
-
 
 
 
@@ -50,6 +50,7 @@ int main(void){
 	Mutex mlock;
 	tx1 *id;
 	int i = 10;
+	MessageTest(Message(10));
 //	*id = (tx1) i;
 	//INFO("id %x , i %x ,*id %x",id,i,*id);
 	t t1;
