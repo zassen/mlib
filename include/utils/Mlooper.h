@@ -71,9 +71,36 @@ class Mlooper {
 
 		static Mlooper* getForThread();
 	private:
+		struct Request{
+
+			int fd;
+			int ident;
+			MlooperCallback* callback;
+			void* data;
+		};
+
+		struct Response{
+			int evevts;
+			Request request;
+
+		};
+
+		struct MessageEnvelope{
+
+			MessageEnveloe(): uptime(0){}
+
+			MessageEnvelope(nsecs_t uptime, const MessageHandler* handler, const Message* message):uptime(uptime),handler(handler).message(message){}
+			nsecs_t uptime;
+			MessageHandler* handler;
+			Message* message;
+		};
+
 		int mWakeReadPipeFd;
 	        int mWakeWritePipeFd;	
 		Mutex mlock;
+		size_t mResponseIndex;
+		Vector<Response> mResponse;
+		KeyedVector<int,Requeset> mRequests;
 
 		int pollInner(int timeoutMillis);
 		void awoken();
