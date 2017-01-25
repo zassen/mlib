@@ -33,6 +33,19 @@ struct Message{
 
 };
 
+
+class MessageHandler  {
+protected:
+    virtual ~MessageHandler() { }
+
+public:
+    /**
+     * Handles a message.
+     */
+    virtual void handleMessage(const Message &message) = 0;
+};
+   
+
 int MessageTest(const Message &msg)
 {
 
@@ -49,7 +62,7 @@ class Mlooper {
 	protected:
 		virtual ~Mlooper();
 	public:
-		Mloper();
+		Mlooper();
 		int pollOnce(int timeoutMillis, int* outFd, int* outEvents, void** outData);
 		inline int pollOnce(int timeoutMillis){
 			return pollOnce(timeoutMillis, NULL, NULL, NULL);
@@ -62,6 +75,8 @@ class Mlooper {
 		bool isIdling() const;
 
 		static Mlooper* prepare(int opts);
+
+		void sendMessage(const MessageHandler &handler, const Message &message); 
 
 		static void setForThread(const Mlooper* mlooper);
 
