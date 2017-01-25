@@ -10,7 +10,7 @@ using namespace std;
 namespace mlib{
 
 
-typedef int (*Mlooper_callbackFunc)(int fd, int events, void *datea);
+typedef int (*Mlooper_callbackFunc)(int fd, int events, void *data);
 
 struct Message{
 
@@ -49,16 +49,12 @@ class Mlooper {
 	protected:
 		virtual ~Mlooper();
 	public:
-		MLooper();
+		Mloper();
 		int pollOnce(int timeoutMillis, int* outFd, int* outEvents, void** outData);
 		inline int pollOnce(int timeoutMillis){
 			return pollOnce(timeoutMillis, NULL, NULL, NULL);
 		}
 
-		int pollAll(int timeoutMillis, int* outFd, int* outEvents, void** outData);
-		inline int pollAll(int timeoutMillis){
-			return pollAll(timeoutMillis, NULL, NULL, NULL);
-		}
 
 		void wake();
 		int addFd(int fd, int ident, int events, Mlooper_callbackFunc callback, void* data);
@@ -90,23 +86,38 @@ class Mlooper {
 			nsecs_t uptime;
 			MessageHandler* handler;
 			Message* message;
-		}
+		};
 
+
+		bool mSendingMessage;
+
+		volatile bool mIdling;
+
+		int mEpollFd;
 
 		int mWakeReadPipeFd;
+
 	        int mWakeWritePipeFd;	
+		
 		Mutex mlock;
+
 		size_t mResponseIndex;
+
 		Vector<Response> mResponse;
-		KeyedVector<int,Requeset> mRequests;
+
+		KeyedVector<int,Request> mRequests;
+
 		Vector<MessageEnvelope> mMessageEnvelope;
 
 		int pollInner(int timeoutMillis);
+
 		void awoken();
 
+		void pushResponse(int events, const Request &request);
 
 
-}
+
+};
 
 
 
