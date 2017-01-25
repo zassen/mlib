@@ -84,16 +84,14 @@ class Mlooper {
 			Request request;
 
 		};
-
+		
 		struct MessageEnvelope{
 
-			MessageEnveloe(): uptime(0){}
-
-			MessageEnvelope(nsecs_t uptime, const MessageHandler* handler, const Message* message):uptime(uptime),handler(handler).message(message){}
 			nsecs_t uptime;
 			MessageHandler* handler;
 			Message* message;
-		};
+		}
+
 
 		int mWakeReadPipeFd;
 	        int mWakeWritePipeFd;	
@@ -101,6 +99,7 @@ class Mlooper {
 		size_t mResponseIndex;
 		Vector<Response> mResponse;
 		KeyedVector<int,Requeset> mRequests;
+		Vector<MessageEnvelope> mMessageEnvelope;
 
 		int pollInner(int timeoutMillis);
 		void awoken();
