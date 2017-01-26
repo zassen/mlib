@@ -6,6 +6,7 @@
 #include <utils/Timers.h>
 #include <string>
 #include <sys/epoll.h>
+#include <utils/Mutex.h>
 using namespace std;
 namespace mlib{
 
@@ -86,7 +87,7 @@ class Mlooper {
 
 			int fd;
 			int ident;
-			MlooperCallback* callback;
+			Mlooper_callbackFunc* callback;
 			void* data;
 		};
 
@@ -130,7 +131,13 @@ class Mlooper {
 
 		void pushResponse(int events, const Request &request);
 
+		void initTLSKey();
 
+		void freeTLS(void *mlooper);
+		
+		void bindThread(const Mlooper* mlooper);
+
+		Mlooper* getMlooperFromThread();
 
 };
 
