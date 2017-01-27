@@ -45,6 +45,13 @@ public:
      */
     virtual void handleMessage(const Message &message) = 0;
 };
+
+class MlooperEventCallback {
+	protected:
+		virtual ~MlooperEventCallback(){}
+	public:
+		virtual int handleEvent(int fd, int events, void* data) = 0;
+};
    
 
 int MessageTest(const Message &msg)
@@ -63,6 +70,13 @@ class Mlooper {
 	protected:
 		virtual ~Mlooper();
 	public:
+		enum{
+			EVENT_INPUT = 1 << 0 ,
+			EVENT_OUTPUT = 1 << 1 ,
+			EVENT_ERROR = 1 << 2 ,
+			EVENT_HANGUP = 1 << 3 ,
+			EVENT_INVALID = 1 << 4 , 
+		};
 		Mlooper();
 		int pollOnce(int timeoutMillis, int* outFd, int* outEvents, void** outData);
 		inline int pollOnce(int timeoutMillis){
@@ -75,19 +89,22 @@ class Mlooper {
 		int removeFd(int fd);
 		bool isIdling() const;
 
-		static Mlooper* prepare(int opts);
+		static Mlooper* prepare();
 
 		void sendMessage(const MessageHandler &handler, const Message &message); 
 
-		static void setForThread(const Mlooper* mlooper);
+		static void bindThread(const Mlooper* mlooper);
 
-		static Mlooper* getForThread();
+		static Mlooper* getMlooperFromThread();
+
+		int addFd(int fd, int ident, int events, MlooperEventCallback* const &evnetCallback, void* data);
 	private:
+
 		struct Request{
 
 			int fd;
 			int ident;
-			Mlooper_callbackFunc* callback;
+			MlooperEventCallback* eventCallback;
 			void* data;
 		};
 
@@ -115,7 +132,7 @@ class Mlooper {
 
 	        int mWakeWritePipeFd;	
 		
-		Mutex mlock;
+		Mutex mLock;
 
 		size_t mResponseIndex;
 
@@ -131,13 +148,11 @@ class Mlooper {
 
 		void pushResponse(int events, const Request &request);
 
-		void initTLSKey();
+		static void initTLSKey();
 
-		void freeTLS(void *mlooper);
+		static void freeTLS(void *mlooper);
 		
-		void bindThread(const Mlooper* mlooper);
 
-		Mlooper* getMlooperFromThread();
 
 };
 
