@@ -85,19 +85,19 @@ class Mlooper {
 
 
 		void wake();
-		int addFd(int fd, int ident, int events, Mlooper_callbackFunc callback, void* data);
 		int removeFd(int fd);
 		bool isIdling() const;
 
 		static Mlooper* prepare();
 
-		void sendMessage(const MessageHandler &handler, const Message &message); 
+		void sendMessage(MessageHandler* const &handler, Message* const &message); 
 
+		void sendMessageAtTime(nsecs_t uptime, MessageHandler* const &handler, Message* const &message);
 		static void bindThread(const Mlooper* mlooper);
 
 		static Mlooper* getMlooperFromThread();
 
-		int addFd(int fd, int ident, int events, MlooperEventCallback* const &evnetCallback, void* data);
+		int addFd(int fd, int ident, int events,  MlooperEventCallback* const &evnetCallback, void* data);
 	private:
 
 		struct Request{
@@ -116,6 +116,8 @@ class Mlooper {
 		
 		struct MessageEnvelope{
 
+			MessageEnvelope():uptime(0){}
+			MessageEnvelope(nsecs_t uptime, MessageHandler* const handler, Message* const &message):uptime(uptime),handler(handler),message(message){}
 			nsecs_t uptime;
 			MessageHandler* handler;
 			Message* message;
@@ -140,7 +142,7 @@ class Mlooper {
 
 		KeyedVector<int,Request> mRequests;
 
-		Vector<MessageEnvelope> mMessageEnvelope;
+		Vector<MessageEnvelope> mMessageEnvelopes;
 
 		int pollInner(int timeoutMillis);
 
