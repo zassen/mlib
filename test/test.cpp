@@ -3,6 +3,8 @@
 #include <utils/Mutex.h>
 #include <utils/Thread.h>
 #include <utils/Mlooper.h>
+#include <utils/Timers.h>
+
 
 //DEBUG_SET_LEVEL(DEBUG_LEVEL_INFO);
 
@@ -10,34 +12,37 @@
 
 using namespace std;
 using namespace mlib;
+class mhandler : public MessageHandler{
+public:
+	void handleMessage(const Message &message){
+
+		printf("message mWhat=%d\n",message.mWhat);
+	};
+};
+
 class t:public Thread{
-	public:
-t(){
+public:
+	t(){
 
 
 	printf("t create\n");
 
 };
 virtual ~t(){};
-	private:
+
+	status_t readyToRun(){
+		Mlooper *looper = Mlooper::prepare();
+		mLooper = looper;
+	};
+
+	Mlooper *mLooper;
+private:
 virtual bool threadLoop(); 
+
 };
-
 bool t::threadLoop(){
-
-
-	DEBUG("t thread is alive 1\n");
-	sleep(1);
-	DEBUG("t thread is alive 2\n");
-	sleep(1);
-	DEBUG("t thread is alive 3\n");
-	sleep(1);
-	DEBUG("t thread is alive 4\n");
-	sleep(1);
-	DEBUG("t thread is alive 5\n");
-	sleep(1);
-	DEBUG("t thread is alive 6\n");
-	sleep(1);
+	printf("wait epoll event\n");
+	mLooper->pollOnce(10000);
 	return 0;
 
 };

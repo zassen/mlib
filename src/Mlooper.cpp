@@ -172,6 +172,13 @@ int Mlooper::removeFd(int fd){
 	return 1;
 }
 
+void Mlooper::pushResponse(int events, const Request &request){
+	
+	Response response;
+	response.events = events;
+	response.request = request;
+	mResponses.push(response);
+}
 void Mlooper::sendMessage(MessageHandler* const &handler, Message* const &message){
 	nsecs_t now = systemTime(SYSTEM_TIME_MONOTONIC);
 	sendMessageAtTime(now, handler, message);
@@ -201,4 +208,132 @@ void Mlooper::sendMessageAtTime(nsecs_t uptime, MessageHandler* const &handler, 
 	}
 }
 
+int Mlooper::pollOnce(int timeoutMillis){
+	int result = 0 ;
+	for(;;){
+		if(result != 0){
+			DEBUG("%p ~ pollOnce - returning result %d", this, result);
+		}
+		result = pollInner(timeoutMillis);
+	}
+
+
+}
+
+
+int Mlooper::pollInner(int timeoutMillis){
+
+	if(timeoutMillis !=0 && mNextMessageUptime != LLONG_MAX){
+		nsecs_t now = systemTime(SYSTEM_TIME_MONOTONIC);
+		int messageTimeoutMillis = toMillisecondTimeoutDelay(now, mNextMessageUptime); //recaculate the next message timeout time 
+		if(messageTimeoutMillis >= 0 && (timeoutMillis < 0 || messageTimeoutMillis < timeoutMillis)){
+			timeoutMillis = messageTimeoutMillis;
+		}
+		DEBUG("%p ~ pollOnce next message in %ldns, adjusted timeout: timeoutMillis = %d", this, mNextMessageUptime - now, timeoutMillis);
+	}
+
+	int result = POLL_WAKE;
+	mResponses.clear(); // all response will event callback will invoke after message sent
+	mResponseIndex = 0;
+
+	mIdling = true;
+
+	struct epoll_event eventItems[EPOLL_MAX_EVENTS];
+	int eventCount = epoll_wait(mEpollFd, eventItems, EPOLL_MAX_EVENTS, timeoutMillis); 
+	/*wait until new epoll events arrive to run below code*/
+
+	mLock.lock();//lock below operation
+
+	if(eventCount < 0){
+		if(errno == EINTR){
+			goto Done;
+		}
+		ERROR("%p ~ Poll failed with an unexpected error, errno=%d", this, errno);
+		result = POLL_ERROR;
+		goto Done;
+	}
+
+	if(eventCount == 0){
+		INFO("%p ~ pollOnce timeout",this);
+		result = POLL_TIMEOUT;
+		goto Done;
+	}
+
+	DEBUG("%p ~ pollOnce handling events from %d fds", this, eventCount);
+
+	for(int i = 0; i < eventCount; i++){
+		/*check all epoll events*/
+		int fd = eventItems[i].data.fd;
+		uint32_t epollEvents = eventItems[i].events;
+		if(fd == mWakeReadPipeFd){
+			/*check event from looper read pipe*/
+			if(epollEvents & EPOLLIN){
+				awoken();
+			}else{
+				ERROR("unexpected epoll events 0x%x on wake read pipe.", epollEvents);
+			}
+		}else{
+			/*handle event from external added fd*/
+			ssize_t requestIndex = mRequests.indexOfKey(fd); //get the request according to events fd
+			if(requestIndex >= 0){
+				int events = 0;
+				if(epollEvents & EPOLLIN) events |= EVENT_INPUT;
+				if(epollEvents & EPOLLOUT) events |= EVENT_OUTPUT;
+				if(epollEvents & EPOLLERR) events |= EVENT_ERROR;
+				if(epollEvents & EPOLLHUP) events |= EVENT_HANGUP;
+				pushResponse(events, mRequests.valueAt(requestIndex)); //add the event of request into mResponses 
+			}else{
+				ERROR("unexpected epoll events 0x%x on fd %d that is no longer registered.", epollEvents, fd);
+			}
+
+		}
+	}
+
+Done: ;
+
+      /*Invoke pending message callbacks.*/
+      mNextMessageUptime = LLONG_MAX;
+      while(mMessageEnvelopes.size() != 0){
+	      nsecs_t now = systemTime(SYSTEM_TIME_MONOTONIC);
+	      const MessageEnvelope &messageEnvelope = mMessageEnvelopes.itemAt(0);
+	      if(messageEnvelope.uptime <= now){
+		      {
+			      MessageHandler* handler = messageEnvelope.handler;
+			      Message message = *messageEnvelope.message;
+			      mMessageEnvelopes.removeAt(0);
+			      mSendingMessage = true;
+			      mLock.unlock();
+			      DEBUG("%p ~ pollOnce - sending message to message handler=%p, what=%d", this, handler, message.mWhat);
+			      handler->handleMessage(message);// Invoke the Message handler
+		      }
+
+		      mLock.lock();
+		      mSendingMessage = false;
+		      result = POLL_CALLBACK;
+	      }else{
+		      mNextMessageUptime = messageEnvelope.uptime;
+		      break;
+	      }
+      }
+
+      mLock.unlock();
+
+      /*Invoke all response callbacks.*/
+      for(size_t i = 0; i < mResponses.size(); i++){
+
+	      Response &response = mResponses.editItemAt(i);
+	      if(response.request.ident == POLL_CALLBACK){
+		      int fd = response.request.fd;
+		      int events = response.events;
+		      void* data = response.request.data;
+
+		      int callbackResult = response.request.eventCallback->handleEvent(fd, events, data);
+		      if(callbackResult == 0 ){
+			      removeFd(fd);
+		      }
+		      result = POLL_CALLBACK;
+	      }
+      }
+      return result;
+}
 }

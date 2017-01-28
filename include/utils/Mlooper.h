@@ -71,6 +71,15 @@ class Mlooper {
 		virtual ~Mlooper();
 	public:
 		enum{
+			POLL_WAKE = -1,
+
+			POLL_CALLBACK = -2,
+
+			POLL_TIMEOUT = -3,
+
+			POLL_ERROR = -4,
+		};
+		enum{
 			EVENT_INPUT = 1 << 0 ,
 			EVENT_OUTPUT = 1 << 1 ,
 			EVENT_ERROR = 1 << 2 ,
@@ -79,9 +88,6 @@ class Mlooper {
 		};
 		Mlooper();
 		int pollOnce(int timeoutMillis, int* outFd, int* outEvents, void** outData);
-		inline int pollOnce(int timeoutMillis){
-			return pollOnce(timeoutMillis, NULL, NULL, NULL);
-		}
 
 
 		void wake();
@@ -98,6 +104,7 @@ class Mlooper {
 		static Mlooper* getMlooperFromThread();
 
 		int addFd(int fd, int ident, int events,  MlooperEventCallback* const &evnetCallback, void* data);
+		int pollOnce(int timeoutMillis);
 	private:
 
 		struct Request{
@@ -109,7 +116,7 @@ class Mlooper {
 		};
 
 		struct Response{
-			int evevts;
+			int events;
 			Request request;
 
 		};
@@ -138,7 +145,7 @@ class Mlooper {
 
 		size_t mResponseIndex;
 
-		Vector<Response> mResponse;
+		Vector<Response> mResponses;
 
 		KeyedVector<int,Request> mRequests;
 
@@ -154,6 +161,7 @@ class Mlooper {
 
 		static void freeTLS(void *mlooper);
 		
+		nsecs_t mNextMessageUptime;
 
 
 };
