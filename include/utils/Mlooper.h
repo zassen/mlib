@@ -53,7 +53,7 @@ class MlooperEventCallback {
 		virtual int handleEvent(int fd, int events, void* data) = 0;
 };
    
-
+/*
 int MessageTest(const Message &msg)
 {
 
@@ -63,7 +63,7 @@ int MessageTest(const Message &msg)
 	
 
 }
-
+*/
 
 class Mlooper {
 

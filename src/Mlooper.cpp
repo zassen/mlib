@@ -59,6 +59,13 @@ void Mlooper::initTLSKey(){
 	if(result != 0) ERROR("could not allocate TLS key errno = %d",errno);
 }
 
+Mlooper* Mlooper::getMlooperFromThread(){
+
+	int result = pthread_once(&gTLSOnce, initTLSKey);
+
+	return (Mlooper*)pthread_getspecific(gTLSKey);
+}
+
 /*bind mlooper with thread. add mlooper ptr to thread TLS*/
 void Mlooper::bindThread(const Mlooper* mlooper){
 

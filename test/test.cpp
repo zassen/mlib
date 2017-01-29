@@ -59,7 +59,7 @@ int main(void){
 	Message msg ;
 	msg.setData(data,sizeof(data));
 	DEBUG("Msg data %s",msg.mData);
-	MessageTest(Message(10));
+//	MessageTest(Message(10));
 //	*id = (tx1) i;
 	//INFO("id %x , i %x ,*id %x",id,i,*id);
 	t t1;
