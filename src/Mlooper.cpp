@@ -244,6 +244,7 @@ int Mlooper::pollInner(int timeoutMillis){
 
 	int result = POLL_WAKE;
 	mResponses.clear(); // all response will event callback will invoke after message sent
+	DEBUG("mResponse size %ld",mResponses.size());
 	mResponseIndex = 0;
 
 	mIdling = true;
@@ -251,6 +252,13 @@ int Mlooper::pollInner(int timeoutMillis){
 	struct epoll_event eventItems[EPOLL_MAX_EVENTS];
 	int eventCount = epoll_wait(mEpollFd, eventItems, EPOLL_MAX_EVENTS, timeoutMillis); 
 	/*wait until new epoll events arrive to run below code*/
+
+
+
+
+
+
+
 
 	DEBUG("get new epoll event");
 	mLock.lock();//lock below operation
@@ -292,6 +300,7 @@ int Mlooper::pollInner(int timeoutMillis){
 				if(epollEvents & EPOLLOUT) events |= EVENT_OUTPUT;
 				if(epollEvents & EPOLLERR) events |= EVENT_ERROR;
 				if(epollEvents & EPOLLHUP) events |= EVENT_HANGUP;
+				DEBUG("push request into response list");
 				pushResponse(events, mRequests.valueAt(requestIndex)); //add the event of request into mResponses 
 			}else{
 				ERROR("unexpected epoll events 0x%x on fd %d that is no longer registered.", epollEvents, fd);
@@ -331,9 +340,11 @@ Done: ;
 
       /*Invoke all response callbacks.*/
       for(size_t i = 0; i < mResponses.size(); i++){
-
+      	      DEBUG("check response size %ld",mResponses.size());
 	      Response &response = mResponses.editItemAt(i);
-	      if(response.request.ident == POLL_CALLBACK){
+	      DEBUG("response event ident %d",response.events);
+	      //if(response.request.ident == POLL_CALLBACK){
+	      if(response.request.ident){
 		      int fd = response.request.fd;
 		      int events = response.events;
 		      void* data = response.request.data;

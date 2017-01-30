@@ -34,7 +34,7 @@ public:
 	fcntl(mWrite, F_SETFL, O_NONBLOCK);
 	}
 	void setCallback(Mlooper* const mlooper, int fd, int events){
-		mlooper->addFd(fd,0,events,this,this);
+		mlooper->addFd(fd,2,events,this,this);
 	}
 	int mRead;
 	int writePipe(void){
@@ -120,8 +120,8 @@ for(;;){
 
 	handler1.writePipe();
 	sleep(2);
-	t1.msgHandler.sendMessage(t1.mLooper,&msg);
-	msg.mWhat++;
+	//t1.msgHandler.sendMessage(t1.mLooper,&msg);
+	//msg.mWhat++;
 }
 	//t1.join();
 	//ERROR("i= %d",i);
