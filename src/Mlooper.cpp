@@ -12,7 +12,8 @@ static const int EPOLL_MAX_EVENTS = 16;
 
 static pthread_key_t gTLSKey = 0 ;
 static pthread_once_t gTLSOnce = PTHREAD_ONCE_INIT;
-Mlooper::Mlooper(){
+Mlooper::Mlooper():mSendingMessage(false),mResponseIndex(0),mNextMessageUptime(LLONG_MAX){
+	DEBUG("init Mlooper");
 	int wakeFds[2];
 	int result = pipe(wakeFds);
 	if(result != 0 ) ERROR("Could not create wake pip. errno = %d", errno);
@@ -187,11 +188,13 @@ void Mlooper::pushResponse(int events, const Request &request){
 	mResponses.push(response);
 }
 void Mlooper::sendMessage(MessageHandler* const &handler, Message* const &message){
+	DEBUG("sendMessage 1");
 	nsecs_t now = systemTime(SYSTEM_TIME_MONOTONIC);
 	sendMessageAtTime(now, handler, message);
 } 
 void Mlooper::sendMessageAtTime(nsecs_t uptime, MessageHandler* const &handler, Message* const &message){
 
+	DEBUG("sendMessage2");
 	size_t i = 0;
 	{
 		AutoMutex lock(mLock);

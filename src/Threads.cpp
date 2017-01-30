@@ -393,6 +393,7 @@ Thread::~Thread()
 
 status_t Thread::readyToRun()
 {
+    DEBUG("enter ready to run");
     return NO_ERROR;
 }
 

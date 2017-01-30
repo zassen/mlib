@@ -18,6 +18,10 @@ public:
 
 		printf("message mWhat=%d\n",message.mWhat);
 	};
+	void sendMessage(Mlooper *mlooper, Message* msg){
+		DEBUG("sendMessage0");
+		mlooper->sendMessage(this,msg);
+	};
 };
 
 class t:public Thread{
@@ -28,22 +32,28 @@ public:
 	printf("t create\n");
 
 };
-virtual ~t(){};
 
-	status_t readyToRun(){
-		Mlooper *looper = Mlooper::prepare();
-		mLooper = looper;
-	};
+status_t readyToRun(){
+	INFO("MLOOPER prepared !");
+	mLooper = new Mlooper();
+	return NO_ERROR;
+};
 
-	Mlooper *mLooper;
+	Mlooper* mLooper;
+
+	mhandler msgHandler;
 private:
 virtual bool threadLoop(); 
+
+protected:
+
+//virtual	~t();
 
 };
 bool t::threadLoop(){
 	printf("wait epoll event\n");
-	mLooper->pollOnce(10000);
-	return 0;
+	mLooper->pollOnce(1000000);
+	return 1;
 
 };
 
@@ -58,20 +68,26 @@ int main(void){
 	uint8_t data[]="Im message";
 	Message msg ;
 	msg.setData(data,sizeof(data));
-	DEBUG("Msg data %s",msg.mData);
+	//DEBUG("Msg data %s",msg.mData);
 //	MessageTest(Message(10));
 //	*id = (tx1) i;
 	//INFO("id %x , i %x ,*id %x",id,i,*id);
 	t t1;
+//sleep(10);
 	t1.run();
-	INFO("test process id %lx",pthread_self());
-	t1.join();
-	ERROR("i= %d",i);
-	sleep(10);
-	INFO("send exit t1 thread request");
+INFO("test process id %lx",pthread_self());
+sleep(1);
+for(;;){
+
+t1.msgHandler.sendMessage(t1.mLooper,&msg);
+msg.mWhat++;
+}
+	//t1.join();
+	//ERROR("i= %d",i);
+	//INFO("send exit t1 thread request");
 	//INFO("t1.requestExitAndWait()= %d",t1.requestExitAndWait());
 	//t1.requestExit();
-	sleep(10);
-	ASSERT("error_status:%d",a);
+	//sleep(10);
+	//ASSERT("error_status:%d",a);
 	return 0;
 }
