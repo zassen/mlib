@@ -252,6 +252,7 @@ int Mlooper::pollInner(int timeoutMillis){
 	int eventCount = epoll_wait(mEpollFd, eventItems, EPOLL_MAX_EVENTS, timeoutMillis); 
 	/*wait until new epoll events arrive to run below code*/
 
+	DEBUG("get new epoll event");
 	mLock.lock();//lock below operation
 
 	if(eventCount < 0){
@@ -338,6 +339,7 @@ Done: ;
 		      void* data = response.request.data;
 
 		      int callbackResult = response.request.eventCallback->handleEvent(fd, events, data);
+		      DEBUG("invoke callback handler");
 		      if(callbackResult == 0 ){
 			      removeFd(fd);
 		      }

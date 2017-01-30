@@ -4,7 +4,7 @@
 #include <utils/Thread.h>
 #include <utils/Mlooper.h>
 #include <utils/Timers.h>
-
+#include <fcntl.h>
 
 //DEBUG_SET_LEVEL(DEBUG_LEVEL_INFO);
 
@@ -23,7 +23,43 @@ public:
 		mlooper->sendMessage(this,msg);
 	};
 };
+class CallbackHandler:MlooperEventCallback{
+public:
+	CallbackHandler(){
+	int pipeFd[2];
+	pipe(pipeFd);
+	mRead = pipeFd[0];
+	mWrite = pipeFd[1];
+	fcntl(mRead, F_SETFL, O_NONBLOCK);
+	fcntl(mWrite, F_SETFL, O_NONBLOCK);
+	}
+	void setCallback(Mlooper* const mlooper, int fd, int events){
+		mlooper->addFd(fd,0,events,this,this);
+	}
+	int mRead;
+	int writePipe(void){
 
+		ssize_t nWrite;
+		do{
+			nWrite = write(mWrite,"w",1);
+		}while(nWrite == -1 && errno == EINTR);
+		DEBUG("write pipe");
+	}
+protected:
+
+	 //~CallbackHandler();
+private:
+	int mWrite;
+	virtual int handleEvent(int fd, int events, void* data){
+	char buffer[128];
+	ssize_t nRead;
+	DEBUG("ENTER callback handler fd=%d, event =%d",fd,events);
+	do{
+	nRead = read(fd, buffer, sizeof(buffer));
+	}while((nRead == -1 && errno == EINTR) || nRead == sizeof(buffer));
+	}
+
+};
 class t:public Thread{
 public:
 	t(){
@@ -68,6 +104,8 @@ int main(void){
 	uint8_t data[]="Im message";
 	Message msg ;
 	msg.setData(data,sizeof(data));
+	CallbackHandler handler1;
+
 	//DEBUG("Msg data %s",msg.mData);
 //	MessageTest(Message(10));
 //	*id = (tx1) i;
@@ -76,11 +114,14 @@ int main(void){
 //sleep(10);
 	t1.run();
 INFO("test process id %lx",pthread_self());
-sleep(1);
+sleep(2);
+handler1.setCallback(t1.mLooper,handler1.mRead,Mlooper::EVENT_INPUT);
 for(;;){
 
-t1.msgHandler.sendMessage(t1.mLooper,&msg);
-msg.mWhat++;
+	handler1.writePipe();
+	sleep(2);
+	t1.msgHandler.sendMessage(t1.mLooper,&msg);
+	msg.mWhat++;
 }
 	//t1.join();
 	//ERROR("i= %d",i);
