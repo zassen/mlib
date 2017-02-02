@@ -5,6 +5,7 @@
 #include <utils/Mlooper.h>
 #include <utils/Timers.h>
 #include <fcntl.h>
+#include <termios.h>
 
 //DEBUG_SET_LEVEL(DEBUG_LEVEL_INFO);
 
@@ -32,11 +33,15 @@ public:
 	mWrite = pipeFd[1];
 	fcntl(mRead, F_SETFL, O_NONBLOCK);
 	fcntl(mWrite, F_SETFL, O_NONBLOCK);
+	mttyFd = open("/dev/ttyUSB0",O_RDWR|O_NDELAY|O_NOCTTY); 
+	fcntl(mttyFd, F_SETFL, 0);
+	setTTY();
 	}
 	void setCallback(Mlooper* const mlooper, int fd, int events){
 		mlooper->addFd(fd,2,events,this,this);
 	}
 	int mRead;
+	int mttyFd;
 	int writePipe(void){
 
 		ssize_t nWrite;
@@ -45,18 +50,44 @@ public:
 		}while(nWrite == -1 && errno == EINTR);
 		DEBUG("write pipe");
 	}
+	int setTTY(void){
+		termios portSetting;
+		bzero(&portSetting, sizeof(portSetting));
+		cfmakeraw(&portSetting);
+		cfsetispeed(&portSetting,B115200);
+		cfsetospeed(&portSetting,B115200);
+		portSetting.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+		portSetting.c_oflag &= ~OPOST;
+		portSetting.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+		portSetting.c_cflag &= ~CSIZE;
+		portSetting.c_cflag |= CS8;
+		portSetting.c_cflag |= CLOCAL | CREAD;
+		portSetting.c_cflag &= ~(PARENB);
+		portSetting.c_iflag |= IGNPAR;
+		portSetting.c_cflag &= ~(CSTOPB);
+		portSetting.c_cflag &= ~(CRTSCTS);
+
+		tcsetattr(mttyFd, TCSANOW, &portSetting);
+
+	}
+	~CallbackHandler(){
+		close(mttyFd);
+	}
 protected:
 
 	 //~CallbackHandler();
 private:
 	int mWrite;
 	virtual int handleEvent(int fd, int events, void* data){
-	char buffer[128];
-	ssize_t nRead;
-	DEBUG("ENTER callback handler fd=%d, event =%d",fd,events);
-	do{
-	nRead = read(fd, buffer, sizeof(buffer));
-	}while((nRead == -1 && errno == EINTR) || nRead == sizeof(buffer));
+		char buffer[128]={0};
+		ssize_t nRead;
+		ssize_t count=0;
+		DEBUG("ENTER callback handler fd=%d, event =%d",fd,events);
+		do{
+		nRead = read(fd, buffer, sizeof(buffer));
+		count += nRead;
+		}while((nRead == -1 && errno == EINTR) || nRead == sizeof(buffer));
+		DEBUG(" callback handler count = %ld,data=%s ", count, buffer);
 	}
 
 };
@@ -115,10 +146,13 @@ int main(void){
 	t1.run();
 INFO("test process id %lx",pthread_self());
 sleep(2);
-handler1.setCallback(t1.mLooper,handler1.mRead,Mlooper::EVENT_INPUT);
+//handler1.setCallback(t1.mLooper,handler1.mRead,Mlooper::EVENT_INPUT);
+handler1.setCallback(t1.mLooper,handler1.mttyFd,Mlooper::EVENT_INPUT);
 for(;;){
 
-	handler1.writePipe();
+//	handler1.writePipe();
+//	handler1.writePipe();
+//	handler1.writePipe();
 	sleep(2);
 	//t1.msgHandler.sendMessage(t1.mLooper,&msg);
 	//msg.mWhat++;
