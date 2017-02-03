@@ -96,9 +96,9 @@ class Mlooper {
 
 		static Mlooper* prepare();
 
-		void sendMessage(MessageHandler* const &handler, Message* const &message); 
+		void sendMessage(MessageHandler* const &handler, const Message& message); 
 
-		void sendMessageAtTime(nsecs_t uptime, MessageHandler* const &handler, Message* const &message);
+		void sendMessageAtTime(nsecs_t uptime, MessageHandler* const &handler, const Message& message);
 		static void bindThread(const Mlooper* mlooper);
 
 		static Mlooper* getMlooperFromThread();
@@ -124,10 +124,10 @@ class Mlooper {
 		struct MessageEnvelope{
 
 			MessageEnvelope():uptime(0){}
-			MessageEnvelope(nsecs_t uptime, MessageHandler* const handler, Message* const &message):uptime(uptime),handler(handler),message(message){}
+			MessageEnvelope(nsecs_t uptime, MessageHandler* const handler, const Message& message):uptime(uptime),handler(handler),message(message){}
 			nsecs_t uptime;
 			MessageHandler* handler;
-			Message* message;
+			Message message;
 		};
 
 

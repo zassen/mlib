@@ -187,12 +187,12 @@ void Mlooper::pushResponse(int events, const Request &request){
 	response.request = request;
 	mResponses.push(response);
 }
-void Mlooper::sendMessage(MessageHandler* const &handler, Message* const &message){
+void Mlooper::sendMessage(MessageHandler* const &handler, const Message& message){
 	DEBUG("sendMessage 1");
 	nsecs_t now = systemTime(SYSTEM_TIME_MONOTONIC);
 	sendMessageAtTime(now, handler, message);
 } 
-void Mlooper::sendMessageAtTime(nsecs_t uptime, MessageHandler* const &handler, Message* const &message){
+void Mlooper::sendMessageAtTime(nsecs_t uptime, MessageHandler* const &handler, const Message& message){
 
 	DEBUG("sendMessage2");
 	size_t i = 0;
@@ -319,7 +319,7 @@ Done: ;
 	      if(messageEnvelope.uptime <= now){
 		      {
 			      MessageHandler* handler = messageEnvelope.handler;
-			      Message message = *messageEnvelope.message;
+			      Message message = messageEnvelope.message;
 			      mMessageEnvelopes.removeAt(0);
 			      mSendingMessage = true;
 			      mLock.unlock();

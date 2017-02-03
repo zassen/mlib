@@ -17,9 +17,9 @@ class mhandler : public MessageHandler{
 public:
 	void handleMessage(const Message &message){
 
-		printf("message mWhat=%d\n",message.mWhat);
+		printf("message mWhat=%d, data=%s\n",message.mWhat, message.mData);
 	};
-	void sendMessage(Mlooper *mlooper, Message* msg){
+	void sendMessage(Mlooper *mlooper, const Message& msg){
 		DEBUG("sendMessage0");
 		mlooper->sendMessage(this,msg);
 	};
@@ -33,9 +33,9 @@ public:
 	mWrite = pipeFd[1];
 	fcntl(mRead, F_SETFL, O_NONBLOCK);
 	fcntl(mWrite, F_SETFL, O_NONBLOCK);
-	mttyFd = open("/dev/ttyUSB0",O_RDWR|O_NDELAY|O_NOCTTY); 
-	fcntl(mttyFd, F_SETFL, 0);
-	setTTY();
+	//mttyFd = open("/dev/ttyUSB0",O_RDWR|O_NDELAY|O_NOCTTY); 
+	//fcntl(mttyFd, F_SETFL, 0);
+	//setTTY();
 	}
 	void setCallback(Mlooper* const mlooper, int fd, int events){
 		mlooper->addFd(fd,2,events,this,this);
@@ -127,6 +127,13 @@ bool t::threadLoop(){
 class t;
 typedef void* tx;
 typedef tx tx1;
+void send(t* pt){
+	Message msg;
+	uint8_t data[]="Im message";
+	msg.setData(data,sizeof(data));
+	msg.mWhat = 10;
+	pt->msgHandler.sendMessage(pt->mLooper,msg);
+}
 int main(void){
 	status_t a=NO_ERROR;
 	Mutex mlock;
@@ -135,6 +142,7 @@ int main(void){
 	uint8_t data[]="Im message";
 	Message msg ;
 	msg.setData(data,sizeof(data));
+	msg.mWhat = 10;
 	CallbackHandler handler1;
 
 	//DEBUG("Msg data %s",msg.mData);
@@ -154,7 +162,8 @@ for(;;){
 //	handler1.writePipe();
 //	handler1.writePipe();
 	sleep(2);
-	//t1.msgHandler.sendMessage(t1.mLooper,&msg);
+	send(&t1);
+	//t1.msgHandler.sendMessage(t1.mLooper,msg);
 	//msg.mWhat++;
 }
 	//t1.join();
