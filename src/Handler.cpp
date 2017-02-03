@@ -39,3 +39,13 @@ bool Handler::threadLoop(){
 	result = threadWork();
 	return result;
 }
+
+void Handler::setHub(HandlerHub* const hub){
+	if(hub == NULL) ASSERT("input NULL hub ptr!");
+	mHub = hub;
+}
+
+Handler* Handler::getHandler(string name){
+	return mHub->getHandler(name);
+
+}

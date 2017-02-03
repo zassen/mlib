@@ -22,6 +22,8 @@ public:
 	virtual bool threadWork() = 0;
 	virtual status_t initInThread(void) = 0;
 	Handler* self(void);
+	void setHub(HandlerHub* const hub);
+	Handler* getHandler(string name);
 private:
 
 	HandlerHub* mHub;
@@ -38,7 +40,6 @@ public:
 	HandlerHub();
 	int addHandler(Handler* const handler);
 	Handler* getHandler(string name);
-
 private:
 	KeyedVector<string,Handler*> mHub;
 
