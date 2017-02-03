@@ -49,3 +49,24 @@ Handler* Handler::getHandler(string name){
 	return mHub->getHandler(name);
 
 }
+
+Handler* HandlerHub::getHandler(string name){
+
+	ssize_t handlerIndex = mHub.indexOfKey(name);
+	if(handlerIndex < 0){
+		INFO("can not find handler %s",name.c_str());
+		return NULL;
+	}
+	return mHub.valueAt(handlerIndex);
+
+}
+
+void HandlerHub::addHandler(Handler* const handler){
+
+	if(handler == NULL){
+		ASSERT("input NULL handler ptr!");
+	}
+	mHub.add(handler->mName, handler);
+	handler->setHub(this);
+
+}

@@ -24,11 +24,11 @@ public:
 	Handler* self(void);
 	void setHub(HandlerHub* const hub);
 	Handler* getHandler(string name);
+	string mName;
 private:
 
 	HandlerHub* mHub;
 	Mlooper* mMlooper;
-	string mName;
 protected:
 	virtual	~Handler();
 
@@ -38,7 +38,7 @@ class HandlerHub{
 
 public:
 	HandlerHub();
-	int addHandler(Handler* const handler);
+	void addHandler(Handler* const handler);
 	Handler* getHandler(string name);
 private:
 	KeyedVector<string,Handler*> mHub;
