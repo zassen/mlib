@@ -18,7 +18,7 @@ struct Message{
 	Message():mWhat(0){}
 	Message(int what):mWhat(what) {}
 	Message(string str):mStr(str){}
-	void 	setData(uint8_t *data,int len){
+	void 	setData(const uint8_t *data,int len){
 		memset(&mData,0,128);
 		if(data != NULL){
 

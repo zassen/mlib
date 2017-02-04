@@ -13,14 +13,15 @@ class Handler : public Thread, public MessageHandler, public MlooperEventCallbac
 
 
 public:
-	Handler(string name):mName(name),mMlooper(0){}
+	Handler(string name);
+	virtual	~Handler();
 	void sendMessage(const Message& msg);
 	status_t readyToRun();
-	bool threadLoop() = 0;
 	virtual void handleMessage(const Message &message)=0;
-	virtual int handleEvent(int fd, int events, void* data) = 0;
-	virtual bool threadWork() = 0;
-	virtual status_t initInThread(void) = 0;
+	virtual int handleEvent(int fd, int events, void* data) ;
+	virtual bool threadLoop();
+	virtual bool threadWork() ;
+	virtual status_t initInThread(void);
 	Handler* self(void);
 	void setHub(HandlerHub* const hub);
 	Handler* getHandler(string name);
@@ -30,21 +31,20 @@ private:
 	HandlerHub* mHub;
 	Mlooper* mMlooper;
 protected:
-	virtual	~Handler();
 
 };
 
 class HandlerHub{
 
 public:
-	HandlerHub();
+	HandlerHub(){}
+	virtual ~HandlerHub(){}
 	void addHandler(Handler* const handler);
 	Handler* getHandler(string name);
 private:
 	KeyedVector<string,Handler*> mHub;
 
 protected:
-	virtual ~HandlerHub();
 
 
 

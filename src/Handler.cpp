@@ -3,6 +3,19 @@
 using namespace mlib;
 using namespace std;
 
+Handler::Handler(string name):mName(name),mMlooper(NULL){
+
+}
+
+Handler::~Handler(){
+
+}
+
+status_t Handler::initInThread(){
+
+	return NO_ERROR;
+}
+
 status_t Handler::readyToRun(){
 	
 	status_t result = NO_ERROR;
@@ -30,6 +43,14 @@ void Handler::sendMessage(const Message& msg){
 	mMlooper->sendMessage(this,msg);
 
 
+}
+int Handler::handleEvent(int fd, int events, void* data) {
+	return 0;
+}
+
+bool Handler::threadWork(){
+
+	return true;
 }
 
 bool Handler::threadLoop(){
