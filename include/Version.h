@@ -5,11 +5,11 @@
 namespace mlib{
 
 using namespace std;
-#define GIT_SHA1 "51572ab-dirty" 
-#define GIT_DATE "Wed Feb 8 19:41:20 2017" 
-#define GIT_COMMIT_SUBJECT "add version.h" 
+#define GIT_TAG "v0.1-2-g540bb51-dirty" 
+#define GIT_DATE "Wed Feb 8 23:23:08 2017" 
+#define GIT_COMMIT_SUBJECT "modify the version tag" 
 
-	static const string mlibVersionSha1= GIT_SHA1;
+	static const string mlibVersionTag= GIT_TAG;
 	static const string mlibVersionDate= GIT_DATE;
 	static const string mlibVersionCommitSubject= GIT_COMMIT_SUBJECT;
 
