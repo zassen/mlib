@@ -1,7 +1,7 @@
 PROJECT(MLIB)
 include_directories(include)
 execute_process(
-	COMMAND git describe --tags --dirty
+	COMMAND git describe --tags --always --dirty
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	OUTPUT_VARIABLE GIT_TAG
 	ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
