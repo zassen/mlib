@@ -2,7 +2,7 @@ PROJECT(MLIB)
 include_directories(include)
 #AUX_SOURCE_DIRECTORY(src MLIB_SRC)
 execute_process(
-	COMMAND git describe --match=NeVeRmAtCh --always  --dirty
+	COMMAND git describe --tags --dirty
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	OUTPUT_VARIABLE GIT_SHA1
 	ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
