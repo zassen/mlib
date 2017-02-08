@@ -1,4 +1,5 @@
 #include <Debug.h>
+#include <Version.h>
 #include <utils/Condition.h>
 #include <utils/Mutex.h>
 #include <utils/Thread.h>
@@ -37,6 +38,9 @@ protected:
 
 int  main(int argc, char* argv[]){
 
+	INFO("mlib version SHA1 %s",mlibVersionSha1.c_str());
+	INFO("mlib version Date %s",mlibVersionDate.c_str());
+	INFO("mlib version CommitSubject %s",mlibVersionCommitSubject.c_str());
 	HandlerHub hub;
 	testHandler t1("t1");
 	testHandler t2("t2");
