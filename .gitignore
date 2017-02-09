@@ -32,7 +32,6 @@
 *.dSYM/
 *.su
 *.bak
-Version.h
 
 # Tags
 tags

@@ -8,10 +8,9 @@ struct version{
 	
 	std::string Tag;
 	std::string Date;
-	std::string CommitSubject;
 };
 
-static const version mlibVersion = {GIT_TAG,GIT_DATE,GIT_COMMIT_SUBJECT};
+static const version mlibVersion = {VERSION_TAGS,VERSION_DATE};
 
 #define CONFIG_DEBUG_ENABLE
 
@@ -54,7 +53,7 @@ inline static char * getDate(void){
 						\
 do{						\
 	PRINT("%s  ASSERT@%s:%s:%d>>" fmt"\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);\
-	PRINT("TAG:%s\nDATE:%s\nCOMMIT:%s\n",mlibVersion.Tag.c_str(), mlibVersion.Date.c_str(), mlibVersion.CommitSubject.c_str());\
+	PRINT("TAG:%s\nDATE:%s\n",mlibVersion.Tag.c_str(), mlibVersion.Date.c_str());\
 	while(1)				\
 	{					\
 		exit(-1);			\
