@@ -31,8 +31,15 @@
 # Debug files
 *.dSYM/
 *.su
+*.bak
 Version.h
 
 # Tags
 tags
 
+#Cmake file
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+Makefile
+test
