@@ -1,6 +1,12 @@
+cmake_minimum_required(VERSION 2.8)
 PROJECT(TEST)
 include_directories(../include)
 LINK_DIRECTORIES(../)
+#find_library(LIBMLIB
+#	NAMES libmlib.a
+#        PATHS	../${CMAKE_CURRENT_SOURCE_DIR})
+#set(LIBMLIB)
+#LINK_LIBRARIES(mlib)
 AUX_SOURCE_DIRECTORY(. TEST_SRC)
 add_definitions(-DHAVE_PTHREADS)
 string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
