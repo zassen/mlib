@@ -1,25 +1,14 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#include <string>
-namespace mlib{
 
-using namespace std;
 #define GIT_TAG "@GIT_TAG@" 
 #define GIT_DATE "@GIT_DATE@" 
 #define GIT_COMMIT_SUBJECT "@GIT_COMMIT_SUBJECT@" 
 
-struct version{
-	
-	string Tag;
-	string Date;
-	string CommitSubject;
-};
 
 
-static const version mlibVersion = {GIT_TAG,GIT_DATE,GIT_COMMIT_SUBJECT};
 
 
-}
 
 #endif

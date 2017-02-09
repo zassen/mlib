@@ -1,6 +1,17 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 #include <Version.h>
+#include <string>
+
+
+struct version{
+	
+	std::string Tag;
+	std::string Date;
+	std::string CommitSubject;
+};
+
+static const version mlibVersion = {GIT_TAG,GIT_DATE,GIT_COMMIT_SUBJECT};
 
 #define CONFIG_DEBUG_ENABLE
 
