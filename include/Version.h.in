@@ -9,10 +9,15 @@ using namespace std;
 #define GIT_DATE "@GIT_DATE@" 
 #define GIT_COMMIT_SUBJECT "@GIT_COMMIT_SUBJECT@" 
 
-	static const string mlibVersionTag= GIT_TAG;
-	static const string mlibVersionDate= GIT_DATE;
-	static const string mlibVersionCommitSubject= GIT_COMMIT_SUBJECT;
+struct version{
+	
+	string Tag;
+	string Date;
+	string CommitSubject;
+};
 
+
+static const version mlibVersion = {GIT_TAG,GIT_DATE,GIT_COMMIT_SUBJECT};
 
 
 }

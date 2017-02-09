@@ -38,9 +38,6 @@ protected:
 
 int  main(int argc, char* argv[]){
 
-	INFO("mlib version TAG %s",mlibVersionTag.c_str());
-	INFO("mlib version Date %s",mlibVersionDate.c_str());
-	INFO("mlib version CommitSubject %s",mlibVersionCommitSubject.c_str());
 	HandlerHub hub;
 	testHandler t1("t1");
 	testHandler t2("t2");
@@ -53,7 +50,7 @@ int  main(int argc, char* argv[]){
 	char data2[]="message 2";
 	msg1.setData((uint8_t*)data1,10);
 	msg2.setData((uint8_t*)data2,10);
-	for(;;){
+	for(int i=0; i < 10; i++){
 
 		sleep(1);
 		t1.sendMessage(msg1);
@@ -61,4 +58,6 @@ int  main(int argc, char* argv[]){
 		Handler *tmp = t1.getHandler("t2");
 		tmp->sendMessage(msg1);
 	}
+	
+	ASSERT("test assert");
 };

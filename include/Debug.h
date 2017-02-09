@@ -1,7 +1,9 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
+#include <Version.h>
 
 #define CONFIG_DEBUG_ENABLE
+
 enum debug_level{
 	DEBUG_LEVEL_OFF = 0,
 	DEBUG_LEVEL_ERROR,
@@ -41,6 +43,7 @@ inline static char * getDate(void){
 						\
 do{						\
 	PRINT("%s  ASSERT@%s:%s:%d>>" fmt"\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);\
+	PRINT("TAG:%s\nDATE:%s\nCOMMIT:%s\n",mlibVersion.Tag.c_str(), mlibVersion.Date.c_str(), mlibVersion.CommitSubject.c_str());\
 	while(1)				\
 	{					\
 		exit(-1);			\
