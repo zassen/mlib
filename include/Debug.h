@@ -17,6 +17,7 @@ static const version mlibVersion = {VERSION_TAGS,VERSION_DATE};
 enum debug_level{
 	DEBUG_LEVEL_OFF = 0,
 	DEBUG_LEVEL_ERROR,
+	DEBUG_LEVEL_WARN,
 	DEBUG_LEVEL_INFO,
 	DEBUG_LEVEL_DEBUG
 };
@@ -67,6 +68,13 @@ do {						\
 	}					\
 }while(0)
 
+#define WARN(fmt,...)				\
+do {						\
+	if(debug >= DEBUG_LEVEL_WARN){		\
+	PRINT("%s  WARN@%s:%s:%d>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
+	}					\
+}while(0)
+
 #define INFO(fmt,...)				\
 do {						\
 	if(debug >= DEBUG_LEVEL_INFO){		\
@@ -86,11 +94,12 @@ do {						\
 #define DEBUG_SET_LEVEL(x)
 #define ASSERT(fmt,...)
 #define ERROR(fmt,...)
+#define WARN(fmt,...)
 #define INFO(fmt,...)
 #define DEBUG(fmt,...)
 
 #endif /*CONFIG_DEBUG_ENABLE*/
 
-DEBUG_SET_LEVEL(DEBUG_LEVEL_DEBUG);
+DEBUG_SET_LEVEL(DEBUG_LEVEL_INFO);
 
 #endif /*_DEBUG_H_*/
