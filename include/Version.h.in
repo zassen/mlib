@@ -2,9 +2,8 @@
 #define VERSION_H_
 
 
-#define GIT_TAG "@GIT_TAG@" 
-#define GIT_DATE "@GIT_DATE@" 
-#define GIT_COMMIT_SUBJECT "@GIT_COMMIT_SUBJECT@" 
+#define VERSION_TAGS "@_TAGS@"
+#define VERSION_DATE  "@_BUILD_TIME@"
 
 
 
