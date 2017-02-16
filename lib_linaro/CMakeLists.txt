@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 PROJECT(MLIB_LINARO)
 set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "set build type to debug")
+set(CMAKE_C_COMPILER "aarch64-linux-gnu-gcc")
+set(CMAKE_CXX_COMPILER "aarch64-linux-gnu-g++")
 set(_VERSION_PATH "${MLIB_SOURCE_DIR}/include")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${MLIB_LIBRARY_OUTPUT_DIRECTORY} )
 

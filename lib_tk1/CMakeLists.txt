@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 PROJECT(MLIB_TK1)
+set(CMAKE_C_COMPILER "arm-linux-gnueabihf-gcc")
+set(CMAKE_CXX_COMPILER "arm-linux-gnueabihf-g++")
 set(CMAKE_BUILD_TYPE Debug)
 set(_VERSION_PATH "${MLIB_SOURCE_DIR}/include")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${MLIB_LIBRARY_OUTPUT_DIRECTORY} )
