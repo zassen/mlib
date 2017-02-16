@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 PROJECT(MLIB_LINARO)
 set(_VERSION_PATH "${MLIB_SOURCE_DIR}/include")
+set(MLIB_LINARO_BINARY_DIR ${MLIB_BINARY_DIR})
 
 add_custom_target(mlibversion_linaro
 	COMMAND cmake
