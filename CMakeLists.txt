@@ -13,17 +13,17 @@ PROJECT(MLIB)
 #	RETURN_VALUE ret
 #	)
 #configure_file(
-#	${CMAKE_SOURCE_DIR}/include/Version.h.in
-#	${CMAKE_SOURCE_DIR}/include/Version.h
+#	${MLIB_SOURCE_DIR}/include/Version.h.in
+#	${MLIB_SOURCE_DIR}/include/Version.h
 #	)
-set(_VERSION_PATH "${CMAKE_SOURCE_DIR}/include")
+set(_VERSION_PATH "${MLIB_SOURCE_DIR}/include")
 add_custom_target(mlibversion
 	COMMAND cmake
-	ARGS -DVERSION_PATH=${_VERSION_PATH} -P ${CMAKE_SOURCE_DIR}/mlibversion.cmake
+	ARGS -DVERSION_PATH=${_VERSION_PATH} -P ${MLIB_SOURCE_DIR}/mlibversion.cmake
 	COMMENT "SET MLIB VERSION"
 	)
 add_definitions(-DHAVE_PTHREADS)
-string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
+string(LENGTH "${MLIB_SOURCE_DIR}/" SOURCE_PATH_SIZE)
 message(STATUS "source_path_size:${SOURCE_PATH_SIZE}")
 add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
 AUX_SOURCE_DIRECTORY(src MLIB_SRC)
