@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 PROJECT(MLIB_TK1)
+set(CMAKE_BUILD_TYPE Debug)
 set(_VERSION_PATH "${MLIB_SOURCE_DIR}/include")
-set(MLIB_TK1_BINARY_DIR ${MLIB_BINARY_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${MLIB_LIBRARY_OUTPUT_DIRECTORY} )
 
 add_custom_target(mlibversion_tk1
 	COMMAND cmake

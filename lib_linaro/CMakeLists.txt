@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 PROJECT(MLIB_LINARO)
+set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "set build type to debug")
 set(_VERSION_PATH "${MLIB_SOURCE_DIR}/include")
-set(MLIB_LINARO_BINARY_DIR ${MLIB_BINARY_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${MLIB_LIBRARY_OUTPUT_DIRECTORY} )
 
 add_custom_target(mlibversion_linaro
 	COMMAND cmake
