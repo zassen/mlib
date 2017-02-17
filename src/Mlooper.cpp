@@ -13,7 +13,7 @@ static const int EPOLL_MAX_EVENTS = 16;
 static pthread_key_t gTLSKey = 0 ;
 static pthread_once_t gTLSOnce = PTHREAD_ONCE_INIT;
 Mlooper::Mlooper():mSendingMessage(false),mResponseIndex(0),mNextMessageUptime(LLONG_MAX){
-	DEBUG("init Mlooper");
+	TRACE("init Mlooper");
 	int wakeFds[2];
 	int result = pipe(wakeFds);
 	if(result != 0 ) ERROR("Could not create wake pip. errno = %d", errno);
@@ -188,13 +188,13 @@ void Mlooper::pushResponse(int events, const Request &request){
 	mResponses.push(response);
 }
 void Mlooper::sendMessage(MessageHandler* const &handler, const Message& message){
-	DEBUG("sendMessage 1");
+	TRACE("sendMessage 1");
 	nsecs_t now = systemTime(SYSTEM_TIME_MONOTONIC);
 	sendMessageAtTime(now, handler, message);
 } 
 void Mlooper::sendMessageAtTime(nsecs_t uptime, MessageHandler* const &handler, const Message& message){
 
-	DEBUG("sendMessage2");
+	TRACE("sendMessage2");
 	size_t i = 0;
 	{
 		AutoMutex lock(mLock);
@@ -222,7 +222,7 @@ int Mlooper::pollOnce(int timeoutMillis){
 	int result = 0 ;
 	for(;;){
 		if(result != 0){
-			DEBUG("%p ~ pollOnce - returning result %d", this, result);
+			TRACE("%p ~ pollOnce - returning result %d", this, result);
 		}
 		result = pollInner(timeoutMillis);
 	}
@@ -239,12 +239,12 @@ int Mlooper::pollInner(int timeoutMillis){
 		if(messageTimeoutMillis >= 0 && (timeoutMillis < 0 || messageTimeoutMillis < timeoutMillis)){
 			timeoutMillis = messageTimeoutMillis;
 		}
-		DEBUG("%p ~ pollOnce next message in %ldns, adjusted timeout: timeoutMillis = %d", this, mNextMessageUptime - now, timeoutMillis);
+		TRACE("%p ~ pollOnce next message in %ldns, adjusted timeout: timeoutMillis = %d", this, mNextMessageUptime - now, timeoutMillis);
 	}
 
 	int result = POLL_WAKE;
 	mResponses.clear(); // all response will event callback will invoke after message sent
-	DEBUG("mResponse size %ld",mResponses.size());
+	TRACE("mResponse size %ld",mResponses.size());
 	mResponseIndex = 0;
 
 	mIdling = true;
@@ -260,7 +260,7 @@ int Mlooper::pollInner(int timeoutMillis){
 
 
 
-	DEBUG("get new epoll event");
+	TRACE("get new epoll event");
 	mLock.lock();//lock below operation
 
 	if(eventCount < 0){
@@ -278,7 +278,7 @@ int Mlooper::pollInner(int timeoutMillis){
 		goto Done;
 	}
 
-	DEBUG("%p ~ pollOnce handling events from %d fds", this, eventCount);
+	TRACE("%p ~ pollOnce handling events from %d fds", this, eventCount);
 
 	for(int i = 0; i < eventCount; i++){
 		/*check all epoll events*/
@@ -300,7 +300,7 @@ int Mlooper::pollInner(int timeoutMillis){
 				if(epollEvents & EPOLLOUT) events |= EVENT_OUTPUT;
 				if(epollEvents & EPOLLERR) events |= EVENT_ERROR;
 				if(epollEvents & EPOLLHUP) events |= EVENT_HANGUP;
-				DEBUG("push request into response list");
+				TRACE("push request into response list");
 				pushResponse(events, mRequests.valueAt(requestIndex)); //add the event of request into mResponses 
 			}else{
 				ERROR("unexpected epoll events 0x%x on fd %d that is no longer registered.", epollEvents, fd);
@@ -323,7 +323,7 @@ Done: ;
 			      mMessageEnvelopes.removeAt(0);
 			      mSendingMessage = true;
 			      mLock.unlock();
-			      DEBUG("%p ~ pollOnce - sending message to message handler=%p, what=%d", this, handler, message.mWhat);
+			      TRACE("%p ~ pollOnce - sending message to message handler=%p, what=%d", this, handler, message.mWhat);
 			      handler->handleMessage(message);// Invoke the Message handler
 		      }
 
@@ -340,9 +340,9 @@ Done: ;
 
       /*Invoke all response callbacks.*/
       for(size_t i = 0; i < mResponses.size(); i++){
-      	      DEBUG("check response size %ld",mResponses.size());
+      	      TRACE("check response size %ld",mResponses.size());
 	      Response &response = mResponses.editItemAt(i);
-	      DEBUG("response event ident %d",response.events);
+	      TRACE("response event ident %d",response.events);
 	      //if(response.request.ident == POLL_CALLBACK){
 	      if(response.request.ident){
 		      int fd = response.request.fd;
@@ -350,7 +350,7 @@ Done: ;
 		      void* data = response.request.data;
 
 		      int callbackResult = response.request.eventCallback->handleEvent(fd, events, data);
-		      DEBUG("invoke callback handler");
+		      TRACE("invoke callback handler");
 		      if(callbackResult == 0 ){
 			      removeFd(fd);
 		      }

@@ -10,7 +10,7 @@ struct version{
 	std::string Date;
 };
 
-static const version mlibVersion = {VERSION_TAGS,VERSION_DATE};
+extern const version mlibVersion ;
 
 #define CONFIG_DEBUG_ENABLE
 
@@ -29,22 +29,22 @@ enum debug_level{
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-static char date[30];
-inline static char * getDate(void){
-
-
-	memset(date,0,30);
-	time_t timer ;
-	struct tm* timeinfo;
-	time(&timer);
-	timeinfo = localtime(&timer);
-	strftime(date,29,"%Y%m%d-%T",localtime(&timer));
-	return date;
-
-
-
-
-}
+//static char date[30];
+  char * getDate(void);
+//
+//
+//	memset(date,0,30);
+//	time_t timer ;
+//	struct tm* timeinfo;
+//	time(&timer);
+//	timeinfo = localtime(&timer);
+//	strftime(date,29,"%Y%m%d-%T",localtime(&timer));
+//	return date;
+//
+//
+//
+//
+//}
 #define PRINT printf
 #define __FILENAME__ (__FILE__ + SOURCE_PATH_SIZE)
 
@@ -82,10 +82,10 @@ do {						\
 	}					\
 }while(0)
 
-#define DEBUG(fmt,...)				\
+#define TRACE(fmt,...)				\
 do {						\
 	if(debug >= DEBUG_LEVEL_DEBUG){		\
-	PRINT("%s  DEBUG@%s:%s:%d>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
+	PRINT("%s  TRACE@%s:%s:%d>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
 	}					\
 }while(0)
 
@@ -96,7 +96,7 @@ do {						\
 #define ERROR(fmt,...)
 #define WARN(fmt,...)
 #define INFO(fmt,...)
-#define DEBUG(fmt,...)
+#define TRACE(fmt,...)
 
 #endif /*CONFIG_DEBUG_ENABLE*/
 

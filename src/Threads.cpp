@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-// #define LOG_NDEBUG 0
+// #define LOG_NTRACE 0
 #include "Debug.h"
 #include <assert.h>
 #include <errno.h>
@@ -393,7 +393,7 @@ Thread::~Thread()
 
 status_t Thread::readyToRun()
 {
-    DEBUG("enter ready to run");
+    TRACE("enter ready to run");
     return NO_ERROR;
 }
 
@@ -516,8 +516,8 @@ void Thread::requestExit()
 status_t Thread::requestExitAndWait()
 {
     Mutex::Autolock _l(mLock);
-    DEBUG("mThread=%p",mThread) ;
-    DEBUG("getThreadId=%p",getThreadId()) ;
+    TRACE("mThread=%p",mThread) ;
+    TRACE("getThreadId=%p",getThreadId()) ;
     if (mThread == getThreadId()) {
         ERROR(
         "Thread (this=%p): don't call waitForExit() from this "
@@ -534,15 +534,15 @@ status_t Thread::requestExitAndWait()
     // This next line is probably not needed any more, but is being left for
     // historical reference. Note that each interested party will clear flag.
     mExitPending = false;
-	DEBUG("get thread exit signal \n");
+	TRACE("get thread exit signal \n");
     return mStatus;
 }
 
 status_t Thread::join()
 {
     Mutex::Autolock _l(mLock);
-    DEBUG("mThread=%p",mThread) ;
-    DEBUG("getThreadId=%p",getThreadId()) ;
+    TRACE("mThread=%p",mThread) ;
+    TRACE("getThreadId=%p",getThreadId()) ;
     if (mThread == getThreadId()) {
         ERROR(
         "Thread (this=%p): don't call join() from this "
