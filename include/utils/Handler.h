@@ -16,6 +16,7 @@ public:
 	Handler(string name);
 	virtual	~Handler();
 	void sendMessage(const Message& msg);
+	int addListenFd(int fd, int ident, int events);
 	status_t readyToRun();
 	virtual void handleMessage(const Message &message)=0;
 	virtual int handleEvent(int fd, int events, void* data) ;
