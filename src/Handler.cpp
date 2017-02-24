@@ -19,6 +19,7 @@ status_t Handler::initInThread(){
 int Handler::addListenFd(int fd, int ident, int events){
 	int result = 0;
 	result = this->mMlooper->addFd(fd,ident,events,this,this);
+	return result;
 
 }
 status_t Handler::readyToRun(){
