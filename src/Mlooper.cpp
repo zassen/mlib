@@ -79,12 +79,16 @@ void Mlooper::bindThread(const Mlooper* mlooper){
 }
 
 Mlooper* Mlooper::prepare(){
-
+	INFO("Mlooper prepare");
 	Mlooper* mlooper = Mlooper::getMlooperFromThread();
+	INFO("Mlooper prepare %d",mlooper);
 	if(mlooper == NULL){
 		mlooper = new Mlooper();
+		
+		INFO("Mlooper new prepare %d",mlooper);
 		Mlooper::bindThread(mlooper);
 	}
+	INFO("Mlooper prepare %d",mlooper);
 	return mlooper;
 }
 

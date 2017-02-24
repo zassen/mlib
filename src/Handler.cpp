@@ -18,6 +18,7 @@ status_t Handler::initInThread(){
 
 int Handler::addListenFd(int fd, int ident, int events){
 	int result = 0;
+	if(mMlooper == NULL) ASSERT("mMlooper null");
 	result = this->mMlooper->addFd(fd,ident,events,this,this);
 	return result;
 
@@ -29,8 +30,8 @@ status_t Handler::readyToRun(){
 	if(mMlooper != NULL) ASSERT("member Mlooper is uninited before use it");
 
 	//mMlooper = new Mlooper();
-	mMlooper = Mlooper::prepare();
-
+	this->mMlooper = Mlooper::prepare();
+	INFO("Mlooper create:%d",mMlooper);
 	if(mMlooper < 0 ) ASSERT("create mlooper fail at handler %s", this->mName.c_str());
 
 	result = initInThread();	

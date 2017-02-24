@@ -20,13 +20,17 @@ public:
 	status_t readyToRun();
 	virtual void handleMessage(const Message &message)=0;
 	virtual int handleEvent(int fd, int events, void* data) ;
-	virtual bool threadLoop();
+	bool threadLoop();
 	virtual bool threadWork() ;
 	virtual status_t initInThread(void);
 	Handler* self(void);
 	void setHub(HandlerHub* const hub);
 	Handler* getHandler(string name);
+	void getMlooper(){ INFO("test mlooper %p",mMlooper);};
 	string mName;
+//	HandlerHub* mHub;
+//	Mlooper* mMlooper;
+
 private:
 
 	//HandlerHub* mHub;
