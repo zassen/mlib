@@ -29,9 +29,11 @@ public:
 	string mName;
 private:
 
+	//HandlerHub* mHub;
+	//Mlooper* mMlooper;
+protected:
 	HandlerHub* mHub;
 	Mlooper* mMlooper;
-protected:
 
 };
 

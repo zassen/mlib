@@ -111,6 +111,7 @@ void Mlooper::awoken(){
 
 int Mlooper::addFd(int fd, int ident, int events, MlooperEventCallback* const &eventCallback, void* data){
 
+	INFO("addFd called ");
 	if(ident < 0 ){
 		ERROR("Invalid attempt to set callback with ident < 0. ");
 		return -1;
@@ -119,10 +120,12 @@ int Mlooper::addFd(int fd, int ident, int events, MlooperEventCallback* const &e
 	if(events & EVENT_INPUT) epollEvents |= EPOLLIN;
 	if(events & EVENT_OUTPUT) epollEvents |= EPOLLOUT;
 
+	INFO("addFd called1 ");
 	{
 		/*below operation need guard by lock*/
 		AutoMutex lock(mLock);
 		
+		INFO("addFd called2 ");
 		Request request;
 		request.fd = fd;
 		request.ident = ident;

@@ -109,6 +109,8 @@ inline Mutex::~Mutex() {
     pthread_mutex_destroy(&mMutex);
 }
 inline status_t Mutex::lock() {
+	INFO("LOCK1");
+    //return 0;
     return -pthread_mutex_lock(&mMutex);
 }
 inline void Mutex::unlock() {
