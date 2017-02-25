@@ -19,6 +19,7 @@ status_t Handler::initInThread(){
 int Handler::addListenFd(int fd, int ident, int events){
 	int result = 0;
 	if(mMlooper == NULL) ASSERT("mMlooper null");
+	INFO("mMlooper %p",this->mMlooper);
 	result = this->mMlooper->addFd(fd,ident,events,this,this);
 	return result;
 
@@ -47,6 +48,8 @@ Handler* Handler::self(){
 void Handler::sendMessage(const Message& msg){
 
 	if(mMlooper == NULL) ASSERT("mlooper not create before send message at handler %s",this->mName.c_str());
+	INFO("mMlooper %p",this->mMlooper);
+	INFO("sendMessage handler %p",this);
 	mMlooper->sendMessage(this,msg);
 
 

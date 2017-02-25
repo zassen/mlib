@@ -18,7 +18,10 @@ public:
 	void sendMessage(const Message& msg);
 	int addListenFd(int fd, int ident, int events);
 	status_t readyToRun();
-	virtual void handleMessage(const Message &message)=0;
+	virtual void messageHandler(const Message &message){};
+	void handleMessage(const Message &message){
+		messageHandler(message);
+	};
 	virtual int handleEvent(int fd, int events, void* data) ;
 	bool threadLoop();
 	virtual bool threadWork() ;

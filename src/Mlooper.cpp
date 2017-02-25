@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <errno.h>
+#include <exception>
 
 
 namespace mlib {
@@ -195,13 +196,13 @@ void Mlooper::pushResponse(int events, const Request &request){
 	mResponses.push(response);
 }
 void Mlooper::sendMessage(MessageHandler* const &handler, const Message& message){
-	TRACE("sendMessage 1");
+	TRACE("sendMessage 1,handler %p",handler);
 	nsecs_t now = systemTime(SYSTEM_TIME_MONOTONIC);
 	sendMessageAtTime(now, handler, message);
 } 
 void Mlooper::sendMessageAtTime(nsecs_t uptime, MessageHandler* const &handler, const Message& message){
 
-	TRACE("sendMessage2");
+	TRACE("sendMessage2,handler %p",handler);
 	size_t i = 0;
 	{
 		AutoMutex lock(mLock);
@@ -331,7 +332,15 @@ Done: ;
 			      mSendingMessage = true;
 			      mLock.unlock();
 			      TRACE("%p ~ pollOnce - sending message to message handler=%p, what=%d", this, handler, message.mWhat);
-			      handler->handleMessage(message);// Invoke the Message handler
+			      try{
+					TRACE("invoke Message handler ");
+					handler->handleMessage(message);// Invoke the Message handler
+					TRACE("invoke Message handler finish");
+			      }
+			      catch(exception& e)
+			      {
+				      ASSERT("EXCEPTION %s",e.what());
+			      }
 		      }
 
 		      mLock.lock();

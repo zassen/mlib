@@ -20,11 +20,10 @@ class testHandler: public Handler{
 
 public:
 	testHandler(string name):Handler(name){}
-	void handleMessage(const Message& msg){
+	void messageHandler(const Message& msg){
 		if(msg.mData != NULL){
 			INFO("message data=%s",msg.mData);
 		}
-
 	}
 
 	~testHandler(){}

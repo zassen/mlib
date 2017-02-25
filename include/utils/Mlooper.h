@@ -38,6 +38,7 @@ struct Message{
 
 };
 
+typedef void *hm(const Message &message);
 
 class MessageHandler  {
 protected:

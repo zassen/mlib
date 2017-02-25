@@ -19,7 +19,7 @@ enum debug_level{
 	DEBUG_LEVEL_ERROR,
 	DEBUG_LEVEL_WARN,
 	DEBUG_LEVEL_INFO,
-	DEBUG_LEVEL_DEBUG
+	DEBUG_LEVEL_TRACE
 };
 
 #ifdef CONFIG_DEBUG_ENABLE 
@@ -84,7 +84,7 @@ do {						\
 
 #define TRACE(fmt,...)				\
 do {						\
-	if(debug >= DEBUG_LEVEL_DEBUG){		\
+	if(debug >= DEBUG_LEVEL_TRACE){		\
 	PRINT("%s  TRACE@%s:%s:%d>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
 	}					\
 }while(0)
@@ -100,6 +100,6 @@ do {						\
 
 #endif /*CONFIG_DEBUG_ENABLE*/
 
-DEBUG_SET_LEVEL(DEBUG_LEVEL_INFO);
+DEBUG_SET_LEVEL(DEBUG_LEVEL_TRACE);
 
 #endif /*_DEBUG_H_*/
