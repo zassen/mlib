@@ -34,12 +34,32 @@ protected:
 
 };
 
+class testHandler2 {
+
+public:
+	testHandler2(){};
+	void sendmsg(Handler *handler){
+		INFO("TEST HANDLER2");
+	Message msg1;
+	char data1[]="TEST H2";
+	msg1.setData((uint8_t*)data1,10);
+		handler->sendMessage(msg1);
+	};
+
+	~testHandler2(){}
+private:
+
+protected:
+
+
+};
 
 int  main(int argc, char* argv[]){
 
 	HandlerHub hub;
 	testHandler t1("t1");
 	testHandler t2("t2");
+	testHandler2 test2;
 	hub.addHandler(&t1);
 	hub.addHandler(&t2);
 	t1.run();
@@ -56,6 +76,7 @@ int  main(int argc, char* argv[]){
 		t2.sendMessage(msg2);
 		Handler *tmp = t1.getHandler("t2");
 		tmp->sendMessage(msg1);
+		test2.sendmsg(&t1);
 	}
 	
 	ASSERT("test assert");
