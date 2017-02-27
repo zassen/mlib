@@ -1,6 +1,7 @@
 #include <Debug.h>
 
 const version mlibVersion = {VERSION_TAGS,VERSION_DATE};
+int debugLevel = DEBUG_LEVEL_TRACE;
 
 char date[30];
 char * getDate(void){
@@ -18,3 +19,6 @@ char * getDate(void){
 
 
 }
+void debugSetLevel(int level){
+	debugLevel = level;
+};
