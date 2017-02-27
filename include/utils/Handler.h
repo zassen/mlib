@@ -24,7 +24,10 @@ public:
 	};
 	virtual int handleEvent(int fd, int events, void* data) ;
 	bool threadLoop();
-	virtual bool threadWork() ;
+	virtual bool threadWork(){
+		INFO("Handler threadWork runing");
+		return 1;} 
+
 	virtual status_t initInThread(void);
 	Handler* self(void);
 	void setHub(HandlerHub* const hub);

@@ -18,6 +18,7 @@ status_t Handler::initInThread(){
 
 int Handler::addListenFd(int fd, int ident, int events){
 	int result = 0;
+	mMlooper = Mlooper::getMlooperFromThread();
 	if(mMlooper == NULL) ASSERT("mMlooper null");
 	INFO("mMlooper %p",this->mMlooper);
 	result = this->mMlooper->addFd(fd,ident,events,this,this);
@@ -30,8 +31,8 @@ status_t Handler::readyToRun(){
 
 	if(mMlooper != NULL) ASSERT("member Mlooper is uninited before use it");
 
-	//mMlooper = new Mlooper();
-	this->mMlooper = Mlooper::prepare();
+	mMlooper = new Mlooper();
+	//this->mMlooper = Mlooper::prepare();
 	INFO("Mlooper create:%d",mMlooper);
 	if(mMlooper < 0 ) ASSERT("create mlooper fail at handler %s", this->mName.c_str());
 
@@ -58,16 +59,12 @@ int Handler::handleEvent(int fd, int events, void* data) {
 	return 0;
 }
 
-bool Handler::threadWork(){
-
-	return true;
-}
 
 bool Handler::threadLoop(){
 	bool result =0;
-	mMlooper->pollOnce(10000);
-
+	INFO("PollOnce start-----------------------");
 	result = threadWork();
+	Handler::mMlooper->pollOnce(10000);
 	return result;
 }
 
