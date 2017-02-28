@@ -23,16 +23,17 @@ struct Message{
 		if(data != NULL){
 
 			memcpy(&mData,data,len);
-
+			mDataSize = len;
 		}
 	}
 	void setSource(string name){
-		source = name;
+		mSource = name;
 	}
 	int mWhat;
 	string mStr;
 	uint8_t mData[128];
-	string source;
+	int mDataSize;
+	string mSource;
 
 	
 
