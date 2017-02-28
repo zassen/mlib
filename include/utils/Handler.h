@@ -22,7 +22,7 @@ public:
 	void handleMessage(const Message &message){
 		messageHandler(message);
 	};
-	virtual int handleEvent(int fd, int events, void* data) ;
+	virtual int handleEvent(int fd, int ident, int events, void* data) ;
 	bool threadLoop();
 	virtual bool threadWork(){
 		INFO("Handler threadWork runing");

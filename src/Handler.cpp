@@ -55,7 +55,7 @@ void Handler::sendMessage(const Message& msg){
 
 
 }
-int Handler::handleEvent(int fd, int events, void* data) {
+int Handler::handleEvent(int fd, int ident, int events, void* data) {
 	return 0;
 }
 

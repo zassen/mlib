@@ -362,10 +362,11 @@ Done: ;
 	      //if(response.request.ident == POLL_CALLBACK){
 	      if(response.request.ident){
 		      int fd = response.request.fd;
+		      int ident = response.request.ident;
 		      int events = response.events;
 		      void* data = response.request.data;
 
-		      int callbackResult = response.request.eventCallback->handleEvent(fd, events, data);
+		      int callbackResult = response.request.eventCallback->handleEvent(fd, ident, events, data);
 		      TRACE("invoke callback handler");
 		      if(callbackResult == 0 ){
 			      removeFd(fd);

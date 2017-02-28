@@ -55,7 +55,7 @@ class MlooperEventCallback {
 	protected:
 		virtual ~MlooperEventCallback(){}
 	public:
-		virtual int handleEvent(int fd, int events, void* data) = 0;
+		virtual int handleEvent(int fd, int ident, int events, void* data) = 0;
 };
    
 /*
