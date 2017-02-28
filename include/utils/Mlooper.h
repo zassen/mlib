@@ -29,6 +29,9 @@ struct Message{
 	void setSource(string name){
 		mSource = name;
 	}
+	void setWhat(int what){
+		mWhat = what;
+	}
 	int mWhat;
 	string mStr;
 	uint8_t mData[128];
