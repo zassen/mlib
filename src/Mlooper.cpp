@@ -230,7 +230,7 @@ int Mlooper::pollOnce(int timeoutMillis){
 	int result = 0 ;
 	for(;;){
 		if(result != 0){
-			TRACE("%p ~ pollOnce - returning result %d", this, result);
+			//TRACE("%p ~ pollOnce - returning result %d", this, result);
 		}
 		result = pollInner(timeoutMillis);
 	}

@@ -65,28 +65,28 @@ do{						\
 #define ERROR(fmt,...)				\
 do {						\
 	if(debugLevel >= DEBUG_LEVEL_ERROR){		\
-	PRINT("%s  ERROR@%s:%s:%d>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
+	PRINT("%s  ERROR[%s:%s:%d]>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
 	}					\
 }while(0)
 
 #define WARN(fmt,...)				\
 do {						\
 	if(debugLevel >= DEBUG_LEVEL_WARN){		\
-	PRINT("%s  WARN@%s:%s:%d>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
+	PRINT("%s  WARN[%s:%s:%d]>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
 	}					\
 }while(0)
 
 #define INFO(fmt,...)				\
 do {						\
 	if(debugLevel >= DEBUG_LEVEL_INFO){		\
-	PRINT("%s  INFO@%s:%s:%d>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
+	PRINT("%s  INFO[%s:%s:%d]>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
 	}					\
 }while(0)
 
 #define TRACE(fmt,...)				\
 do {						\
 	if(debugLevel >= DEBUG_LEVEL_TRACE){		\
-	PRINT("%s  TRACE@%s:%s:%d>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
+	PRINT("%s  TRACE[%s:%s:%d]>>" fmt "\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);			\
 	}					\
 }while(0)
 
