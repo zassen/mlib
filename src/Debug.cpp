@@ -1,6 +1,7 @@
 #include <Debug.h>
 
 const version mlibVersion = {VERSION_TAGS,VERSION_DATE};
+version appVersion = {"NULL","NULL"};
 int debugLevel = DEBUG_LEVEL_TRACE;
 
 char date[30];

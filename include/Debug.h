@@ -4,13 +4,14 @@
 #include <string>
 
 
-struct version{
+typedef struct _version{
 	
 	std::string Tag;
 	std::string Date;
-};
+}version;
 
 extern const version mlibVersion ;
+extern version appVersion ;
 
 #define CONFIG_DEBUG_ENABLE
 
@@ -55,7 +56,8 @@ void debugSetLevel(int level);
 						\
 do{						\
 	PRINT("%s  ASSERT@%s:%s:%d>>" fmt"\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__,##__VA_ARGS__);\
-	PRINT("TAG:%s\nDATE:%s\n",mlibVersion.Tag.c_str(), mlibVersion.Date.c_str());\
+	PRINT("MLIB	-->TAG:%s DATE:%s\n",mlibVersion.Tag.c_str(), mlibVersion.Date.c_str());\
+	PRINT("APP	-->TAG:%s DATE:%s\n",appVersion.Tag.c_str(), appVersion.Date.c_str());\
 	while(1)				\
 	{					\
 		exit(-1);			\
