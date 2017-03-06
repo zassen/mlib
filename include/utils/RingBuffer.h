@@ -11,11 +11,11 @@ namespace mlib {
 //#define min(a, b) (a)<(b)?(a):(b)
 
 
-class QRingBuffer
+class RingBuffer
 {
 	public:
-		QRingBuffer(int size = RB_MAX_LEN);
-		~QRingBuffer();
+		RingBuffer(int size = RB_MAX_LEN);
+		~RingBuffer();
 
 		int canRead();    //how much can read
 		int canWrite();   //how much can write

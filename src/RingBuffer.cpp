@@ -1,11 +1,11 @@
 #include <utils/RingBuffer.h>
 
 /**
- *  * @brief QRingBuffer::QRingBuffer
+ *  * @brief RingBuffer::RingBuffer
  *   * @param buffersize Byte
  *    */
 using namespace mlib;
-QRingBuffer::QRingBuffer(int size)
+RingBuffer::RingBuffer(int size)
 {
 	bufferSize = size;
 	rbCapacity = size;
@@ -14,7 +14,7 @@ QRingBuffer::QRingBuffer(int size)
 	rbTail = rbBuff;
 }
 
-QRingBuffer::~QRingBuffer()
+RingBuffer::~RingBuffer()
 {
 	rbBuff = NULL;
 	rbHead = NULL;
@@ -23,10 +23,10 @@ QRingBuffer::~QRingBuffer()
 	delete []rbBuf; //释放缓冲区
 }
 /**
- *  * @brief QRingBuffer::rbCanRead
+ *  * @brief RingBuffer::rbCanRead
  *   * @return 缓冲区可读字节数
  *    */
-int QRingBuffer::canRead()
+int RingBuffer::canRead()
 {
 	//ring buufer is null, return -1
 	if((NULL == rbBuff)||(NULL == rbHead)||(NULL == rbTail))
@@ -47,10 +47,10 @@ int QRingBuffer::canRead()
 	}
 
 /**
-* @brief QRingBuffer::rbCanWrite  缓冲区剩余可写字节数
+* @brief RingBuffer::rbCanWrite  缓冲区剩余可写字节数
 * @return  可写字节数
 */
-int QRingBuffer::canWrite()
+int RingBuffer::canWrite()
 {
 	if((NULL == rbBuff)||(NULL == rbHead)||(NULL == rbTail))
 	{
@@ -61,12 +61,12 @@ int QRingBuffer::canWrite()
 }
 
 /**
-* @brief QRingBuffer::read 从缓冲区读数据
+* @brief RingBuffer::read 从缓冲区读数据
 * @param 目标数组地址
 * @param 读的字节数
 * @return
 */
-int QRingBuffer::read(void *data, int count)
+int RingBuffer::read(void *data, int count)
 {
 	int copySz = 0;
 	int canReadSize=0;
@@ -109,12 +109,12 @@ int QRingBuffer::read(void *data, int count)
 }
 
 /**
-* @brief QRingBuffer::write
+* @brief RingBuffer::write
 * @param 数据地址
 * @param 要写的字节数
 * @return 写入的字节数
 */
-int QRingBuffer::write(const void *data, int count)
+int RingBuffer::write(const void *data, int count)
 {
 	int tailAvailSz = 0;
 
@@ -164,10 +164,10 @@ int QRingBuffer::write(const void *data, int count)
 }
 
 /**
-* @brief QRingBuffer::size
+* @brief RingBuffer::size
 * @return 缓冲区大小
 */
-int QRingBuffer::size()
+int RingBuffer::size()
 {
 	return bufferSize;
 }

@@ -57,7 +57,7 @@ protected:
 };
 
 int  main(int argc, char* argv[]){
-	 QRingBuffer buffer;
+	RingBuffer buffer;
 
 	INFO("buffer size:%d",buffer.size());
 
