@@ -6,8 +6,10 @@
 #include <utils/Mlooper.h>
 #include <utils/Timers.h>
 #include <utils/Handler.h>
+#include <utils/RingBuffer.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <iostream>
 
 //DEBUG_SET_LEVEL(DEBUG_LEVEL_INFO);
 
@@ -55,7 +57,24 @@ protected:
 };
 
 int  main(int argc, char* argv[]){
+	 QRingBuffer buffer;
 
+	INFO("buffer size:%d",buffer.size());
+
+	char data3[48] = {0x55};
+	char data4[8] = {0};
+	cout<<"buffer can read:"<<buffer.canRead()<<endl;
+	cout<<"buffer can write:"<<buffer.canWrite()<<endl;
+	cout<<"buffer writing..."<<endl;
+	buffer.write(data3,sizeof(data3));
+	cout<<"buffer can read:"<<buffer.canRead()<<endl;
+	cout<<"buffer can write:"<<buffer.canWrite()<<endl;
+	cout<<"buffer reading..."<<endl;
+	buffer.read(data4,8);
+	cout<<"buffer can read:"<<buffer.canRead()<<endl;
+	cout<<"buffer can write:"<<buffer.canWrite()<<endl;
+
+	cout<<"HelloWorld!"<<endl;
 	HandlerHub hub;
 	testHandler t1("t1");
 	testHandler t2("t2");
