@@ -187,7 +187,24 @@ unsigned char* RingBuffer::findSymbol(unsigned char symbol){
 	}
 	if (rbHead <= rbTail){
 		tailAvailSz = rbCapacity - (rbTail - rbBuff);
-		result = find(rbTail,rbTail+tailAvailSz,symbol);
+		result = find(rbTail, rbTail+tailAvailSz, symbol);
+		if(result == rbTail+tailAvailSz){
+			result = find(rbBuff, rbHead, symbol);
+			if(result == rbTail+tailAvailSz){
+				return 0;	
+			}
+			return result;
+		}else{
+			return result;
+		}
+		
+	}else{
+		
+		result = find(rbTail, rbTail+tailAvailSz, symbol);
+		if(result == rbTail+tailAvailSz){
+			return 0;
+		}
+		return result;
 	}
 
 }

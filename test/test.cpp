@@ -57,7 +57,8 @@ protected:
 };
 
 int  main(int argc, char* argv[]){
-	RingBuffer buffer(40);
+	RingBuffer buffer(50);
+	unsigned char *testvalue;
 
 	INFO("buffer size:%d",buffer.size());
 
@@ -70,6 +71,8 @@ int  main(int argc, char* argv[]){
 	cout<<"buffer can read:"<<buffer.canRead()<<endl;
 	cout<<"buffer can write:"<<buffer.canWrite()<<endl;
 	cout<<"buffer reading..."<<endl;
+	testvalue = buffer.findSymbol(0x55);
+	INFO("testvalue %c",*testvalue);
 	buffer.read(data4,8);
 	cout<<"buffer can read:"<<buffer.canRead()<<endl;
 	cout<<"buffer can write:"<<buffer.canWrite()<<endl;
