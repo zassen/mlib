@@ -1,5 +1,6 @@
 #ifndef QRINGBUFFER_H
 #define QRINGBUFFER_H
+#include <Debug.h>
 
 #include <cstring>
 
@@ -21,11 +22,12 @@ class RingBuffer
 		int canWrite();   //how much can write
 		int read(void *data, int count);  //read data frome ringbuffer
 		int write(const void *data, int count);
+		unsigned char* findSymbol(unsigned char symbol);
 		int size();
 
 	private:
 		int bufferSize;       //buffer size
-		unsigned char *rbBuf = new unsigned char[bufferSize];
+		unsigned char *rbBuf ;
 		/*环形缓冲区变量*/
 		int rbCapacity; //容量
 		unsigned char  *rbHead;

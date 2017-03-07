@@ -57,7 +57,7 @@ protected:
 };
 
 int  main(int argc, char* argv[]){
-	RingBuffer buffer;
+	RingBuffer buffer(40);
 
 	INFO("buffer size:%d",buffer.size());
 

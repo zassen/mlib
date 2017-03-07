@@ -1,14 +1,17 @@
 #include <utils/RingBuffer.h>
+#include <algorithm>
 
 /**
  *  * @brief RingBuffer::RingBuffer
  *   * @param buffersize Byte
  *    */
 using namespace mlib;
+using namespace std;
 RingBuffer::RingBuffer(int size)
 {
 	bufferSize = size;
 	rbCapacity = size;
+	rbBuf = new unsigned char[bufferSize];
 	rbBuff = rbBuf;
 	rbHead = rbBuff;
 	rbTail = rbBuff;
@@ -130,6 +133,7 @@ int RingBuffer::write(const void *data, int count)
 
 	if (count >= canWrite())
 	{
+		ASSERT("NO enough space to write");
 		return -1;
 	}
 
@@ -170,4 +174,20 @@ int RingBuffer::write(const void *data, int count)
 int RingBuffer::size()
 {
 	return bufferSize;
+}
+
+unsigned char* RingBuffer::findSymbol(unsigned char symbol){
+	int copySz = 0;
+	unsigned char *result = 0;
+	int canReadSize=0;
+	int tailAvailSz ;
+	if((NULL == rbBuff)||(NULL == rbHead)||(NULL == rbTail))
+	{
+		return NULL;
+	}
+	if (rbHead <= rbTail){
+		tailAvailSz = rbCapacity - (rbTail - rbBuff);
+		result = find(rbTail,rbTail+tailAvailSz,symbol);
+	}
+
 }
