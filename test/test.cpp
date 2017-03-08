@@ -57,25 +57,36 @@ protected:
 };
 
 int  main(int argc, char* argv[]){
-	RingBuffer buffer(50);
-	unsigned char *testvalue;
+	RingBuffer buffer(48);
+	int testvalue;
 
 	INFO("buffer size:%d",buffer.size());
+	char testData[1]={0x45};
+	char halfFull[24] = {0};
+	memset(halfFull,0x55,sizeof(halfFull));
+	char readData[24] = {0};
+	buffer.write(halfFull,sizeof(halfFull));
+	buffer.write(testData,1);
+	INFO("availableRead:%d, availableWrite:%d", buffer.availableRead(), buffer.availableWrite());
+	testvalue = buffer.findSymbol('E');
+	buffer.read(readData,sizeof(unsigned char)*(testvalue+1));
+	INFO("testvalue%d availableRead:%d, availableWrite:%d",testvalue, buffer.availableRead(), buffer.availableWrite());
+	for(int i=0;i<testvalue;i++){
 
-	char data3[48] = {0x55};
-	char data4[8] = {0};
-	cout<<"buffer can read:"<<buffer.canRead()<<endl;
-	cout<<"buffer can write:"<<buffer.canWrite()<<endl;
-	cout<<"buffer writing..."<<endl;
-	buffer.write(data3,sizeof(data3));
-	cout<<"buffer can read:"<<buffer.canRead()<<endl;
-	cout<<"buffer can write:"<<buffer.canWrite()<<endl;
-	cout<<"buffer reading..."<<endl;
-	testvalue = buffer.findSymbol(0x55);
-	INFO("testvalue %c",*testvalue);
-	buffer.read(data4,8);
-	cout<<"buffer can read:"<<buffer.canRead()<<endl;
-	cout<<"buffer can write:"<<buffer.canWrite()<<endl;
+		INFO("data6[%d]:%c",i, readData[i]);
+	}
+	INFO("testvalue%d availableRead:%d, availableWrite:%d",testvalue, buffer.availableRead(), buffer.availableWrite());
+	buffer.write(halfFull,sizeof(halfFull));
+	buffer.write(testData,1);
+	INFO("testvalue%d availableRead:%d, availableWrite:%d",testvalue, buffer.availableRead(), buffer.availableWrite());
+	testvalue = buffer.findSymbol(0x45);
+	memset(readData,0,sizeof(readData));
+	buffer.read(readData,sizeof(char)*(testvalue));
+	INFO("testvalue%d availableRead:%d, availableWrite:%d",testvalue, buffer.availableRead(), buffer.availableWrite());
+	for(int i=0;i<testvalue;i++){
+
+		INFO("data6[%d]:%c",i, readData[i]);
+	}
 
 	cout<<"HelloWorld!"<<endl;
 	HandlerHub hub;

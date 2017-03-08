@@ -1,5 +1,4 @@
 #include <utils/RingBuffer.h>
-#include <algorithm>
 
 /**
  *  * @brief RingBuffer::RingBuffer
@@ -9,58 +8,40 @@ using namespace mlib;
 using namespace std;
 RingBuffer::RingBuffer(int size)
 {
-	bufferSize = size;
-	rbCapacity = size;
-	rbBuf = new unsigned char[bufferSize];
-	rbBuff = rbBuf;
-	rbHead = rbBuff;
-	rbTail = rbBuff;
+	mBufferSize = size;
+	mBufferBegin = new unsigned char[mBufferSize];
+	mInputedData = 0;
+	mOutputedData = 0;
 }
 
 RingBuffer::~RingBuffer()
 {
-	rbBuff = NULL;
-	rbHead = NULL;
-	rbTail = NULL;
-	rbCapacity = 0;
-	delete []rbBuf; //释放缓冲区
+	mBufferBegin = NULL;
+	mBufferSize = 0;
+	delete []mBufferBegin; //释放缓冲区
 }
 /**
  *  * @brief RingBuffer::rbCanRead
  *   * @return 缓冲区可读字节数
  *    */
-int RingBuffer::canRead()
+int RingBuffer::availableRead()
 {
 	//ring buufer is null, return -1
-	if((NULL == rbBuff)||(NULL == rbHead)||(NULL == rbTail))
-	{
-		return -1;
-	}
+	if(mBufferBegin == NULL)ASSERT("buffer uninited");
+	
+	return (mInputedData - mOutputedData);
 
-	if (rbHead == rbTail)
-	{
-		return 0;
-	}
-
-	if (rbHead < rbTail)
-	{
-		return rbTail - rbHead;
-	}
-		return rbCapacity - (rbHead - rbTail);
-	}
+}
 
 /**
 * @brief RingBuffer::rbCanWrite  缓冲区剩余可写字节数
 * @return  可写字节数
 */
-int RingBuffer::canWrite()
+int RingBuffer::availableWrite()
 {
-	if((NULL == rbBuff)||(NULL == rbHead)||(NULL == rbTail))
-	{
-		return -1;
-	}
+	if(mBufferBegin == NULL)ASSERT("buffer uninited");
 
-	return rbCapacity - canRead();
+	return (mBufferSize - availableRead());
 }
 
 /**
@@ -71,44 +52,22 @@ int RingBuffer::canWrite()
 */
 int RingBuffer::read(void *data, int count)
 {
-	int copySz = 0;
-	int canReadSize=0;
+	int tailLen=0;
+	int realOutput=0;
+	int tmpCanRead=0;
+	if(mBufferBegin == NULL)ASSERT("buffer uninited");
+	if(NULL == data)ASSERT("Input data is unavailable");
+	tmpCanRead = availableRead();
+	count =min(count,tmpCanRead);
+	realOutput = mOutputedData & ( mBufferSize -1 );   //get real data out index
+	tailLen = mBufferSize - realOutput;
+	tailLen = min( count, tailLen );
+	memcpy( (unsigned char*)data, mBufferBegin+realOutput, tailLen);
+	memcpy( (unsigned char*)data+tailLen, mBufferBegin, count-tailLen);
+	mOutputedData += count;
+	return count;
+	
 
-	if((NULL == rbBuff)||(NULL == rbHead)||(NULL == rbTail))
-	{
-		return -1;
-	}
-	if(NULL == data)
-	{
-		return -1;
-	}
-
-	if (rbHead < rbTail)
-	{
-		canReadSize = canRead();
-		copySz = count<canReadSize?count:canReadSize;
-		memcpy(data, rbHead, copySz);
-		rbHead += copySz;
-		return copySz;
-	}
-	else
-	{
-			if (count < rbCapacity-(rbHead - rbBuff))
-		{
-				copySz = count;
-				memcpy(data, rbHead, copySz);
-			rbHead += copySz;
-			return copySz;
-		}
-		else
-		{
-			copySz = rbCapacity - (rbHead - rbBuff);
-			memcpy(data, rbHead, copySz);
-			rbHead = rbBuff;
-			copySz += read((unsigned char *)data+copySz, count-copySz);
-			return copySz;
-		}
-	}
 }
 
 /**
@@ -119,52 +78,21 @@ int RingBuffer::read(void *data, int count)
 */
 int RingBuffer::write(const void *data, int count)
 {
-	int tailAvailSz = 0;
 
-	if((NULL == rbBuff)||(NULL == rbHead)||(NULL == rbTail))
-	{
-		return -1;
-	}
-
-	if(NULL == data)
-	{
-		return -1;
-	}
-
-	if (count >= canWrite())
-	{
-		ASSERT("NO enough space to write");
-		return -1;
-	}
-
-	if (rbHead <= rbTail)
-	{
-		tailAvailSz = rbCapacity - (rbTail - rbBuff);
-		if (count <= tailAvailSz)
-		{
-			memcpy(rbTail, data, count);
-			rbTail += count;
-			if (rbTail == rbBuff+rbCapacity)
-			{
-				rbTail = rbBuff;
-			}
-				return count;
-		}
-		else
-		{
-			memcpy(rbTail, data, tailAvailSz);
-			rbTail = rbBuff;
-
-			return tailAvailSz + write((char*)data+tailAvailSz, count-tailAvailSz);
-		}
-	}
-	else
-	{
-		memcpy(rbTail, data, count);
-		rbTail += count;
-
-		return count;
-	}
+	int tailLen=0;
+	int realInput=0;
+	int tmpCanWrite=0;
+	if(mBufferBegin == NULL)ASSERT("buffer uninited");
+	if(NULL == data)ASSERT("Input data is unavailable");
+	tmpCanWrite = availableWrite();
+	count = min(count, tmpCanWrite);
+	realInput = mInputedData & ( mBufferSize - 1 );
+	tailLen = mBufferSize - realInput;
+	tailLen = min(count, tailLen);
+	memcpy(mBufferBegin + realInput, (unsigned char*)data, tailLen);
+	memcpy(mBufferBegin, (unsigned char*)data+tailLen, count - tailLen);
+	mInputedData += count;
+	return count;
 }
 
 /**
@@ -173,38 +101,42 @@ int RingBuffer::write(const void *data, int count)
 */
 int RingBuffer::size()
 {
-	return bufferSize;
+	return mBufferSize;
 }
 
-unsigned char* RingBuffer::findSymbol(unsigned char symbol){
-	int copySz = 0;
-	unsigned char *result = 0;
-	int canReadSize=0;
-	int tailAvailSz ;
-	if((NULL == rbBuff)||(NULL == rbHead)||(NULL == rbTail))
-	{
-		return NULL;
+int RingBuffer::findSymbol(unsigned char symbol){
+	int result = 0;
+	int tmpOutputData = 0;
+	unsigned char *targetAddress = 0;
+	int canFindSize=0;
+	int realFindIndex; 
+	if(mBufferBegin == NULL)ASSERT("buffer uninited");
+	tmpOutputData = mOutputedData;
+	realFindIndex = mOutputedData & ( mBufferSize -1 );   //get real data out index
+	targetAddress = mBufferBegin+realFindIndex;
+	canFindSize = availableRead();
+	TRACE("tmpOutputData:%d",tmpOutputData);
+	TRACE("realFindIndex:%d",realFindIndex);
+	if(*targetAddress == symbol){
+			TRACE("symbol:%c, target:%c", symbol, *targetAddress);
+			TRACE("result:%d, canFindSize:%d", result, canFindSize);
+			return 1;
 	}
-	if (rbHead <= rbTail){
-		tailAvailSz = rbCapacity - (rbTail - rbBuff);
-		result = find(rbTail, rbTail+tailAvailSz, symbol);
-		if(result == rbTail+tailAvailSz){
-			result = find(rbBuff, rbHead, symbol);
-			if(result == rbTail+tailAvailSz){
-				return 0;	
-			}
-			return result;
-		}else{
+	do{
+
+		targetAddress = mBufferBegin+realFindIndex;
+		if(*targetAddress == symbol){
+			TRACE("symbol:%c, target:%c", symbol, *targetAddress);
+			TRACE("result:%d, canFindSize:%d",result, canFindSize);
 			return result;
 		}
-		
-	}else{
-		
-		result = find(rbTail, rbTail+tailAvailSz, symbol);
-		if(result == rbTail+tailAvailSz){
-			return 0;
-		}
-		return result;
-	}
+		result++;	
+		realFindIndex = (tmpOutputData + result)  & ( mBufferSize -1 );   //get real data out index
+		canFindSize--;
+	}while(canFindSize != 0);
+	TRACE("symbol:%c, target:%c", symbol, *targetAddress);
+	TRACE("result:%d, canFindSize:%d", result, canFindSize);
+	return 0;
+	
 
 }
