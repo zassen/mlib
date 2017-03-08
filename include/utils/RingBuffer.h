@@ -27,12 +27,12 @@ class RingBuffer
 		int availableWrite();   //how much can write
 		int read(void *data, int count);  //read data frome ringbuffer
 		int write(const void *data, int count);
-		int findSymbol(unsigned char symbol);
+		int findSymbol(char symbol);
 		int size();
 
 	private:
 		int mBufferSize;       //buffer size
-		unsigned char *mBufferBegin;
+		char *mBufferBegin;
 		/*环形缓冲区变量*/
 		unsigned int mInputedData;
 		unsigned int mOutputedData;

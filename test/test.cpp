@@ -57,16 +57,23 @@ protected:
 };
 
 int  main(int argc, char* argv[]){
-	RingBuffer buffer(48);
+	RingBuffer buffer(64);
 	int testvalue;
+	char testa = 0xff;
 
-	INFO("buffer size:%d",buffer.size());
-	char testData[1]={0x45};
-	char halfFull[24] = {0};
-	memset(halfFull,0x55,sizeof(halfFull));
-	char readData[24] = {0};
+	INFO("testa=%d buffer size:%d",testa, buffer.size());
+	unsigned char testData[1]={0x45};
+	unsigned char halfFull[25] = "123456789012345678901234";
+	unsigned char readData[24] = {0};
+	INFO("sizeof halfFull:%d",sizeof(halfFull));
 	buffer.write(halfFull,sizeof(halfFull));
-	buffer.write(testData,1);
+	buffer.read(readData,sizeof(readData));
+	INFO(" availableRead:%d, availableWrite:%d", buffer.availableRead(), buffer.availableWrite());
+	for(int i=0;i<24;i++){
+
+		INFO("data6[%d]:%c",i, readData[i]);
+	}
+	buffer.write(testData,sizeof(testData));
 	INFO("availableRead:%d, availableWrite:%d", buffer.availableRead(), buffer.availableWrite());
 	testvalue = buffer.findSymbol('E');
 	buffer.read(readData,sizeof(unsigned char)*(testvalue+1));
@@ -81,7 +88,7 @@ int  main(int argc, char* argv[]){
 	INFO("testvalue%d availableRead:%d, availableWrite:%d",testvalue, buffer.availableRead(), buffer.availableWrite());
 	testvalue = buffer.findSymbol(0x45);
 	memset(readData,0,sizeof(readData));
-	buffer.read(readData,sizeof(char)*(testvalue));
+	buffer.read(readData,sizeof(unsigned char)*(testvalue));
 	INFO("testvalue%d availableRead:%d, availableWrite:%d",testvalue, buffer.availableRead(), buffer.availableWrite());
 	for(int i=0;i<testvalue;i++){
 

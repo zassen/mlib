@@ -8,8 +8,10 @@ using namespace mlib;
 using namespace std;
 RingBuffer::RingBuffer(int size)
 {
+	if( (size % 2) != 0 )ASSERT("buffer size error, must 2 to the power of x");
 	mBufferSize = size;
-	mBufferBegin = new unsigned char[mBufferSize];
+	mBufferBegin = new char[mBufferSize];
+	memset(mBufferBegin, 0, mBufferSize);
 	mInputedData = 0;
 	mOutputedData = 0;
 }
@@ -62,9 +64,10 @@ int RingBuffer::read(void *data, int count)
 	realOutput = mOutputedData & ( mBufferSize -1 );   //get real data out index
 	tailLen = mBufferSize - realOutput;
 	tailLen = min( count, tailLen );
-	memcpy( (unsigned char*)data, mBufferBegin+realOutput, tailLen);
-	memcpy( (unsigned char*)data+tailLen, mBufferBegin, count-tailLen);
+	memcpy( (char*)data, mBufferBegin+realOutput, tailLen);
+	memcpy( (char*)data+tailLen, mBufferBegin, count-tailLen);
 	mOutputedData += count;
+	TRACE("read data count:%d",count);
 	return count;
 	
 
@@ -89,9 +92,10 @@ int RingBuffer::write(const void *data, int count)
 	realInput = mInputedData & ( mBufferSize - 1 );
 	tailLen = mBufferSize - realInput;
 	tailLen = min(count, tailLen);
-	memcpy(mBufferBegin + realInput, (unsigned char*)data, tailLen);
-	memcpy(mBufferBegin, (unsigned char*)data+tailLen, count - tailLen);
+	memcpy(mBufferBegin + realInput, (char*)data, tailLen);
+	memcpy(mBufferBegin, (char*)data+tailLen, count - tailLen);
 	mInputedData += count;
+	TRACE("write data count:%d",count);
 	return count;
 }
 
@@ -104,10 +108,10 @@ int RingBuffer::size()
 	return mBufferSize;
 }
 
-int RingBuffer::findSymbol(unsigned char symbol){
+int RingBuffer::findSymbol(char symbol){
 	int result = 0;
 	int tmpOutputData = 0;
-	unsigned char *targetAddress = 0;
+	char *targetAddress = 0;
 	int canFindSize=0;
 	int realFindIndex; 
 	if(mBufferBegin == NULL)ASSERT("buffer uninited");
@@ -117,18 +121,14 @@ int RingBuffer::findSymbol(unsigned char symbol){
 	canFindSize = availableRead();
 	TRACE("tmpOutputData:%d",tmpOutputData);
 	TRACE("realFindIndex:%d",realFindIndex);
-	if(*targetAddress == symbol){
-			TRACE("symbol:%c, target:%c", symbol, *targetAddress);
-			TRACE("result:%d, canFindSize:%d", result, canFindSize);
-			return 1;
-	}
 	do{
 
 		targetAddress = mBufferBegin+realFindIndex;
+		TRACE("target:%c,result:%d", *targetAddress, result);
 		if(*targetAddress == symbol){
 			TRACE("symbol:%c, target:%c", symbol, *targetAddress);
 			TRACE("result:%d, canFindSize:%d",result, canFindSize);
-			return result;
+			return result+1;
 		}
 		result++;	
 		realFindIndex = (tmpOutputData + result)  & ( mBufferSize -1 );   //get real data out index
