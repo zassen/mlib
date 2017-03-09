@@ -44,7 +44,7 @@ public:
 		INFO("TEST HANDLER2");
 	Message msg1;
 	char data1[]="TEST H2";
-	msg1.setData((uint8_t*)data1,10);
+		msg1.setData(data1,10);
 		handler->sendMessage(msg1);
 	};
 
@@ -107,8 +107,8 @@ int  main(int argc, char* argv[]){
 	Message msg1,msg2;
 	char data1[]="message 1";
 	char data2[]="message 2";
-	msg1.setData((uint8_t*)data1,10);
-	msg2.setData((uint8_t*)data2,10);
+	msg1.setData(data1,10);
+	msg2.setData(data2,10);
 	for(int i=0; i < 10; i++){
 
 		sleep(1);

@@ -119,23 +119,23 @@ int RingBuffer::findSymbol(char symbol){
 	realFindIndex = mOutputedData & ( mBufferSize -1 );   //get real data out index
 	targetAddress = mBufferBegin+realFindIndex;
 	canFindSize = availableRead();
-	TRACE("tmpOutputData:%d",tmpOutputData);
-	TRACE("realFindIndex:%d",realFindIndex);
+	//TRACE("tmpOutputData:%d",tmpOutputData);
+	//TRACE("realFindIndex:%d",realFindIndex);
 	do{
 
 		targetAddress = mBufferBegin+realFindIndex;
-		TRACE("target:%c,result:%d, canFindSize:%d", *targetAddress, result,canFindSize);
+//		TRACE("target:%c,result:%d, canFindSize:%d", *targetAddress, result,canFindSize);
 		if(*targetAddress == symbol){
-			TRACE("symbol:%c, target:%c", symbol, *targetAddress);
-			TRACE("result:%d, canFindSize:%d",result, canFindSize);
+//			TRACE("symbol:%c, target:%c", symbol, *targetAddress);
+			//TRACE("result:%d, canFindSize:%d",result, canFindSize);
 			return result+1;
 		}
 		result++;	
 		realFindIndex = (tmpOutputData + result)  & ( mBufferSize -1 );   //get real data out index
 		canFindSize--;
 	}while(canFindSize > 0);
-	TRACE("symbol:%c, target:%c", symbol, *targetAddress);
-	TRACE("result:%d, canFindSize:%d", result, canFindSize);
+	//TRACE("symbol:%c, target:%c", symbol, *targetAddress);
+	//TRACE("result:%d, canFindSize:%d", result, canFindSize);
 	return 0;
 	
 

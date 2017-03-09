@@ -252,7 +252,7 @@ int Mlooper::pollInner(int timeoutMillis){
 
 	int result = POLL_WAKE;
 	mResponses.clear(); // all response will event callback will invoke after message sent
-	TRACE("mResponse size %ld",mResponses.size());
+	//TRACE("mResponse size %ld",mResponses.size());
 	mResponseIndex = 0;
 
 	mIdling = true;
@@ -268,7 +268,6 @@ int Mlooper::pollInner(int timeoutMillis){
 
 
 
-	TRACE("get new epoll event");
 	mLock.lock();//lock below operation
 
 	if(eventCount < 0){
@@ -285,6 +284,8 @@ int Mlooper::pollInner(int timeoutMillis){
 		result = POLL_TIMEOUT;
 		goto Done;
 	}
+
+	TRACE("get new epoll event");
 
 	TRACE("%p ~ pollOnce handling events from %d fds", this, eventCount);
 
