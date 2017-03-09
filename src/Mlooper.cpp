@@ -196,13 +196,13 @@ void Mlooper::pushResponse(int events, const Request &request){
 	mResponses.push(response);
 }
 void Mlooper::sendMessage(MessageHandler* const &handler, const Message& message){
-	TRACE("sendMessage 1,handler %p",handler);
+	//TRACE("sendMessage 1,handler %p",handler);
 	nsecs_t now = systemTime(SYSTEM_TIME_MONOTONIC);
 	sendMessageAtTime(now, handler, message);
 } 
 void Mlooper::sendMessageAtTime(nsecs_t uptime, MessageHandler* const &handler, const Message& message){
 
-	TRACE("sendMessage2,handler %p",handler);
+	//TRACE("sendMessage2,handler %p",handler);
 	size_t i = 0;
 	{
 		AutoMutex lock(mLock);
@@ -334,9 +334,9 @@ Done: ;
 			      mLock.unlock();
 			      TRACE("%p ~ pollOnce - sending message to message handler=%p, what=%d", this, handler, message.mWhat);
 			      try{
-					TRACE("invoke Message handler ");
+					//TRACE("invoke Message handler ");
 					handler->handleMessage(message);// Invoke the Message handler
-					TRACE("invoke Message handler finish");
+					//TRACE("invoke Message handler finish");
 			      }
 			      catch(exception& e)
 			      {

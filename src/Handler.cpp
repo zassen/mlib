@@ -50,7 +50,7 @@ void Handler::sendMessage(const Message& msg){
 
 	if(mMlooper == NULL) ASSERT("mlooper not create before send message at handler %s",this->mName.c_str());
 	INFO("mMlooper %p",this->mMlooper);
-	INFO("sendMessage handler %p",this);
+	//INFO("sendMessage handler %p",this);
 	mMlooper->sendMessage(this,msg);
 
 
