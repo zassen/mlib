@@ -33,7 +33,7 @@ status_t Handler::readyToRun(){
 
 	mMlooper = new Mlooper();
 	//this->mMlooper = Mlooper::prepare();
-	INFO("Mlooper create:%d",mMlooper);
+	INFO("Mlooper create:%p",mMlooper);
 	if(mMlooper < 0 ) ASSERT("create mlooper fail at handler %s", this->mName.c_str());
 
 	result = initInThread();	
