@@ -15,6 +15,7 @@ class Handler : public Thread, public MessageHandler, public MlooperEventCallbac
 public:
 	Handler(string name);
 	virtual	~Handler();
+	int setTimeout(int timeout);
 	void sendMessage(const Message& msg);
 	int addListenFd(int fd, int ident, int events);
 	status_t readyToRun();
@@ -36,7 +37,7 @@ public:
 	string mName;
 //	HandlerHub* mHub;
 //	Mlooper* mMlooper;
-
+	int mTimeoutMillis;
 private:
 
 	//HandlerHub* mHub;

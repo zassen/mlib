@@ -97,6 +97,7 @@ class Mlooper {
 		};
 		Mlooper();
 		int pollOnce(int timeoutMillis, int* outFd, int* outEvents, void** outData);
+		virtual int timeoutHandle(){};
 
 
 		void wake();

@@ -3,12 +3,16 @@
 using namespace mlib;
 using namespace std;
 
-Handler::Handler(string name):mName(name),mMlooper(NULL){
+Handler::Handler(string name):mName(name),mTimeoutMillis(1000),mMlooper(NULL){
 
 }
 
 Handler::~Handler(){
 
+}
+
+int Handler::setTimeout(int timeout){
+	mTimeoutMillis = timeout;
 }
 
 status_t Handler::initInThread(){
@@ -64,7 +68,7 @@ bool Handler::threadLoop(){
 	bool result =0;
 	INFO("PollOnce start-----------------------");
 	result = threadWork();
-	Handler::mMlooper->pollOnce(10000);
+	Handler::mMlooper->pollOnce(mTimeoutMillis);
 	return result;
 }
 

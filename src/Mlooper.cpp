@@ -112,6 +112,7 @@ void Mlooper::awoken(){
 	do{
 		nRead = read(mWakeReadPipeFd, buffer, sizeof(buffer));
 	}while((nRead == -1 && errno == EINTR) || nRead == sizeof(buffer));
+	timeoutHandle();
 }
 
 int Mlooper::addFd(int fd, int ident, int events, MlooperEventCallback* const &eventCallback, void* data){
