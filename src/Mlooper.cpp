@@ -13,7 +13,7 @@ static const int EPOLL_MAX_EVENTS = 16;
 
 static pthread_key_t gTLSKey = 0 ;
 static pthread_once_t gTLSOnce = PTHREAD_ONCE_INIT;
-Mlooper::Mlooper():mSendingMessage(false),mResponseIndex(0),mNextMessageUptime(LLONG_MAX){
+Mlooper::Mlooper():mEnableTimeoutHandler(false),mSendingMessage(false),mResponseIndex(0),mNextMessageUptime(LLONG_MAX){
 	TRACE("init Mlooper");
 	int wakeFds[2];
 	int result = pipe(wakeFds);
@@ -48,9 +48,6 @@ Mlooper::~Mlooper(){
 	close(mEpollFd);
 }
 
-void Mlooper::timeoutHandle() {
-	TRACE("Mlooper timeout Handle");
-}
 void Mlooper::freeTLS(void *mlooper){
 
 	Mlooper* self = static_cast<Mlooper*>(mlooper);
@@ -110,12 +107,12 @@ void Mlooper::wake(){
 
 void Mlooper::awoken(){
 
+	Message msg(0xff);
 	char buffer[16];
 	ssize_t nRead;
 	do{
 		nRead = read(mWakeReadPipeFd, buffer, sizeof(buffer));
 	}while((nRead == -1 && errno == EINTR) || nRead == sizeof(buffer));
-	//TRACE("timeout awoken!");
 
 }
 
@@ -287,7 +284,10 @@ int Mlooper::pollInner(int timeoutMillis){
 	if(eventCount == 0){
 		INFO("%p ~ timeout heart beat",this);
 		result = POLL_TIMEOUT;
-		timeoutHandle();
+		if(mEnableTimeoutHandler){
+			if(mTimeout == NULL)ASSERT("mTimeout is NULL");
+			mTimeout->timeoutHandler();
+		}
 		goto Done;
 	}
 

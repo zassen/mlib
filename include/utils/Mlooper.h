@@ -62,6 +62,14 @@ class MlooperEventCallback {
 		virtual int handleEvent(int fd, int ident, int events, void* data) = 0;
 };
    
+class MlooperTimeoutHandler{
+	public:
+		virtual void timeoutHandler(){
+			TRACE("Mlooper timeout handler");
+		};
+		virtual ~MlooperTimeoutHandler(){}
+
+};
 /*
 int MessageTest(const Message &msg)
 {
@@ -74,7 +82,7 @@ int MessageTest(const Message &msg)
 }
 */
 
-class Mlooper {
+class Mlooper{
 
 	protected:
 		virtual ~Mlooper();
@@ -97,8 +105,9 @@ class Mlooper {
 		};
 		Mlooper();
 		int pollOnce(int timeoutMillis, int* outFd, int* outEvents, void** outData);
-		virtual void timeoutHandle() ;
-
+		int timeoutHandlerOnOff(bool value){
+			mEnableTimeoutHandler = value;
+		}
 
 		void wake();
 		int removeFd(int fd);
@@ -115,8 +124,12 @@ class Mlooper {
 
 		int addFd(int fd, int ident, int events,  MlooperEventCallback* const &evnetCallback, void* data);
 		int pollOnce(int timeoutMillis);
+		void setTimeoutHandler(MlooperTimeoutHandler *handler){
+			mTimeout = handler;
+		}
 	private:
-
+		bool mEnableTimeoutHandler;
+		MlooperTimeoutHandler *mTimeout;
 		struct Request{
 
 			int fd;
@@ -139,7 +152,6 @@ class Mlooper {
 			MessageHandler* handler;
 			Message message;
 		};
-
 
 		bool mSendingMessage;
 

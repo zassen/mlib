@@ -14,10 +14,6 @@ Handler::~Handler(){
 int Handler::setTimeout(int timeout){
 	mTimeoutMillis = timeout;
 }
-void Handler::timeoutHandle(){
-		TRACE("timeout handle enter");
-		pollhandle();
-}
 
 status_t Handler::initInThread(){
 
@@ -44,6 +40,7 @@ status_t Handler::readyToRun(){
 	INFO("Mlooper create:%p",mMlooper);
 	if(mMlooper < 0 ) ASSERT("create mlooper fail at handler %s", this->mName.c_str());
 
+	mMlooper->setTimeoutHandler(this);
 	result = initInThread();	
 
 	return result;

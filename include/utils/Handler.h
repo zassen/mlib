@@ -9,7 +9,7 @@
 namespace mlib{
 class HandlerHub;
 
-class Handler : public Thread, public MessageHandler, public MlooperEventCallback {
+class Handler : public Thread, public MessageHandler, public MlooperEventCallback, public MlooperTimeoutHandler {
 
 
 public:
@@ -19,9 +19,10 @@ public:
 	void sendMessage(const Message& msg);
 	int addListenFd(int fd, int ident, int events);
 	status_t readyToRun();
-	virtual void pollhandle(){};
-	void timeoutHandle();
 	virtual void messageHandler(const Message &message){};
+	void timeoutHandler(){
+		TRACE("handler timeout handler");
+	};
 	void handleMessage(const Message &message){
 		messageHandler(message);
 	};
@@ -38,6 +39,12 @@ public:
 	void getMlooper(){ INFO("test mlooper %p",mMlooper);};
 	string mName;
 	int mTimeoutMillis;
+	void configTimeout(bool value){
+		mMlooper->timeoutHandlerOnOff(value);
+	}
+	void timeoutHandler(MlooperTimeoutHandler *handler){
+		mMlooper->setTimeoutHandler(handler);
+	}
 private:
 
 protected:
