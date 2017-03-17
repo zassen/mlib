@@ -19,6 +19,8 @@ public:
 	void sendMessage(const Message& msg);
 	int addListenFd(int fd, int ident, int events);
 	status_t readyToRun();
+	virtual void pollhandle(){};
+	void timeoutHandle();
 	virtual void messageHandler(const Message &message){};
 	void handleMessage(const Message &message){
 		messageHandler(message);
@@ -35,13 +37,9 @@ public:
 	Handler* getHandler(string name);
 	void getMlooper(){ INFO("test mlooper %p",mMlooper);};
 	string mName;
-//	HandlerHub* mHub;
-//	Mlooper* mMlooper;
 	int mTimeoutMillis;
 private:
 
-	//HandlerHub* mHub;
-	//Mlooper* mMlooper;
 protected:
 	HandlerHub* mHub;
 	Mlooper* mMlooper;

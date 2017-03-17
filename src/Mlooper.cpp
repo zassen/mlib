@@ -48,6 +48,9 @@ Mlooper::~Mlooper(){
 	close(mEpollFd);
 }
 
+void Mlooper::timeoutHandle() {
+	TRACE("Mlooper timeout Handle");
+}
 void Mlooper::freeTLS(void *mlooper){
 
 	Mlooper* self = static_cast<Mlooper*>(mlooper);
@@ -112,7 +115,8 @@ void Mlooper::awoken(){
 	do{
 		nRead = read(mWakeReadPipeFd, buffer, sizeof(buffer));
 	}while((nRead == -1 && errno == EINTR) || nRead == sizeof(buffer));
-	timeoutHandle();
+	//TRACE("timeout awoken!");
+
 }
 
 int Mlooper::addFd(int fd, int ident, int events, MlooperEventCallback* const &eventCallback, void* data){
@@ -281,8 +285,9 @@ int Mlooper::pollInner(int timeoutMillis){
 	}
 
 	if(eventCount == 0){
-		INFO("%p ~ pollOnce timeout",this);
+		INFO("%p ~ timeout heart beat",this);
 		result = POLL_TIMEOUT;
+		timeoutHandle();
 		goto Done;
 	}
 
@@ -297,6 +302,7 @@ int Mlooper::pollInner(int timeoutMillis){
 		if(fd == mWakeReadPipeFd){
 			/*check event from looper read pipe*/
 			if(epollEvents & EPOLLIN){
+				TRACE("test timeout");
 				awoken();
 			}else{
 				ERROR("unexpected epoll events 0x%x on wake read pipe.", epollEvents);

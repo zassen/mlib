@@ -14,6 +14,10 @@ Handler::~Handler(){
 int Handler::setTimeout(int timeout){
 	mTimeoutMillis = timeout;
 }
+void Handler::timeoutHandle(){
+		TRACE("timeout handle enter");
+		pollhandle();
+}
 
 status_t Handler::initInThread(){
 
