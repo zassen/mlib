@@ -52,6 +52,7 @@ extern int debugLevel;
 //#define DEBUG_SET_LEVEL(x)  debugLevel = x;
 void debugSetLevel(int level);
 
+void hexDump(const void *_data, size_t size);
 #define ASSERT(fmt,...)				\
 						\
 do{						\
@@ -92,6 +93,14 @@ do {						\
 	}					\
 }while(0)
 
+#define DUMPHEX(a,b)				\
+do {						\
+	if(debugLevel >= DEBUG_LEVEL_TRACE){		\
+	PRINT("%s  TRACE[%s:%s:%d]>>\n",getDate(),__FILENAME__,__FUNCTION__);			\
+	hexDump(a,b); \
+	PRINT("\n"); \
+	}					\
+}while(0)
 #else  /* CONFIG_DEBUG_ENABLE */ 
 
 #define DEBUG_SET_LEVEL(x)
@@ -100,6 +109,7 @@ do {						\
 #define WARN(fmt,...)
 #define INFO(fmt,...)
 #define TRACE(fmt,...)
+#define DUMPHEX(a,b)				
 
 #endif /*CONFIG_DEBUG_ENABLE*/
 
