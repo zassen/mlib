@@ -96,7 +96,7 @@ do {						\
 #define DUMPHEX(a,b)				\
 do {						\
 	if(debugLevel >= DEBUG_LEVEL_TRACE){		\
-	PRINT("%s  TRACE[%s:%s:%d]>>\n",getDate(),__FILENAME__,__FUNCTION__);			\
+	PRINT("%s  TRACE[%s:%s:%d]>>\n",getDate(),__FILENAME__,__FUNCTION__,__LINE__);			\
 	hexDump(a,b); \
 	PRINT("\n"); \
 	}					\

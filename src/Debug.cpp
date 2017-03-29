@@ -27,7 +27,7 @@ void debugSetLevel(int level){
 
 void hexDump(const void *_data, size_t size) {
     //我们要hexdump的内容的起始地址由*_data指定，大小为size
-    const char *data = (const char *)_data;
+    const unsigned char *data = (const unsigned char *)_data;
     //获取起始地址位置
     unsigned int offset = 0;
     //偏移量初始化为0，也就是第一行最左边将显示0x0000
