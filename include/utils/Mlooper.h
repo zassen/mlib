@@ -113,6 +113,7 @@ class Mlooper{
 		int removeFd(int fd);
 		bool isIdling() const;
 
+		void setName(string name);
 		static Mlooper* prepare();
 
 		void sendMessage(MessageHandler* const &handler, const Message& message); 
@@ -128,6 +129,7 @@ class Mlooper{
 			mTimeout = handler;
 		}
 	private:
+		string mOwner;
 		bool mEnableTimeoutHandler;
 		MlooperTimeoutHandler *mTimeout;
 		struct Request{

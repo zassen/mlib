@@ -239,7 +239,9 @@ int Mlooper::pollOnce(int timeoutMillis){
 
 
 }
-
+void Mlooper::setName(string name){
+	mOwner = name;
+};
 
 int Mlooper::pollInner(int timeoutMillis){
 
@@ -282,7 +284,7 @@ int Mlooper::pollInner(int timeoutMillis){
 	}
 
 	if(eventCount == 0){
-		INFO("%p ~ timeout heart beat",this);
+		INFO("%s ~ timeout heart beat",this->mOwner.c_str());
 		result = POLL_TIMEOUT;
 		if(mEnableTimeoutHandler){
 			if(mTimeout == NULL)ASSERT("mTimeout is NULL");

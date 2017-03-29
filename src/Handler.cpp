@@ -3,7 +3,7 @@
 using namespace mlib;
 using namespace std;
 
-Handler::Handler(string name):mName(name),mTimeoutMillis(1000),mMlooper(NULL){
+Handler::Handler(string name):mName(name),mTimeoutMillis(10000),mMlooper(NULL){
 
 }
 
@@ -39,7 +39,7 @@ status_t Handler::readyToRun(){
 	//this->mMlooper = Mlooper::prepare();
 	INFO("Mlooper create:%p",mMlooper);
 	if(mMlooper < 0 ) ASSERT("create mlooper fail at handler %s", this->mName.c_str());
-
+	mMlooper->setName(mName);
 	mMlooper->setTimeoutHandler(this);
 	result = initInThread();	
 
