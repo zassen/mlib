@@ -82,14 +82,14 @@ void Mlooper::bindThread(const Mlooper* mlooper){
 Mlooper* Mlooper::prepare(){
 	INFO("Mlooper prepare");
 	Mlooper* mlooper = Mlooper::getMlooperFromThread();
-	TRACE("Mlooper prepare %p",mlooper);
+	TRACE("Mlooper prepare <%p>",mlooper);
 	if(mlooper == NULL){
 		mlooper = new Mlooper();
 		
-		TRACE("Mlooper new prepare %p",mlooper);
+		TRACE("Mlooper new prepare <%p>",mlooper);
 		Mlooper::bindThread(mlooper);
 	}
-	TRACE("Mlooper prepare %p",mlooper);
+	TRACE("Mlooper prepare <%p>",mlooper);
 	return mlooper;
 }
 
@@ -251,7 +251,7 @@ int Mlooper::pollInner(int timeoutMillis){
 		if(messageTimeoutMillis >= 0 && (timeoutMillis < 0 || messageTimeoutMillis < timeoutMillis)){
 			timeoutMillis = messageTimeoutMillis;
 		}
-		TRACE("%p ~ pollOnce next message in %ldns, adjusted timeout: timeoutMillis = %d", this, mNextMessageUptime - now, timeoutMillis);
+		TRACE("<%p> ~ pollOnce next message in %ldns, adjusted timeout: timeoutMillis = %d", this, mNextMessageUptime - now, timeoutMillis);
 	}
 
 	int result = POLL_WAKE;
@@ -278,13 +278,13 @@ int Mlooper::pollInner(int timeoutMillis){
 		if(errno == EINTR){
 			goto Done;
 		}
-		ERROR("%p ~ Poll failed with an unexpected error, errno=%d", this, errno);
+		ERROR("<%p> ~ Poll failed with an unexpected error, errno=%d", this, errno);
 		result = POLL_ERROR;
 		goto Done;
 	}
 
 	if(eventCount == 0){
-		INFO("%s ~ timeout heart beat",this->mOwner.c_str());
+		INFO("<<%s>> ~ heart beat",this->mOwner.c_str());
 		result = POLL_TIMEOUT;
 		if(mEnableTimeoutHandler){
 			if(mTimeout == NULL)ASSERT("mTimeout is NULL");
@@ -293,9 +293,9 @@ int Mlooper::pollInner(int timeoutMillis){
 		goto Done;
 	}
 
-	TRACE("get new epoll event");
+	//TRACE("<<%s>> get new epoll event", this->mOwner.c_str());
 
-	TRACE("%p ~ pollOnce handling events from %d fds", this, eventCount);
+	TRACE("<<%s>> <%p> ~ pollOnce handling events from %d fds", this->mOwner.c_str(), this, eventCount);
 
 	for(int i = 0; i < eventCount; i++){
 		/*check all epoll events*/
@@ -304,7 +304,6 @@ int Mlooper::pollInner(int timeoutMillis){
 		if(fd == mWakeReadPipeFd){
 			/*check event from looper read pipe*/
 			if(epollEvents & EPOLLIN){
-				TRACE("test timeout");
 				awoken();
 			}else{
 				ERROR("unexpected epoll events 0x%x on wake read pipe.", epollEvents);
@@ -341,7 +340,7 @@ Done: ;
 			      mMessageEnvelopes.removeAt(0);
 			      mSendingMessage = true;
 			      mLock.unlock();
-			      TRACE("%p ~ pollOnce - sending message to message handler=%p, what=%d", this, handler, message.mWhat);
+			      TRACE("<<%s>> <%p>  ~ pollOnce - sending message to message handler=%p, what=%d", this->mOwner.c_str(), this, handler, message.mWhat);
 			      try{
 					//TRACE("invoke Message handler ");
 					handler->handleMessage(message);// Invoke the Message handler

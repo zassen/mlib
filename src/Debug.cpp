@@ -32,7 +32,7 @@ void hexDump(const void *_data, size_t size) {
     unsigned int offset = 0;
     //偏移量初始化为0，也就是第一行最左边将显示0x0000
     while (offset < size) {
-        printf("0x%04x  ", offset);
+        printf(CYAN "0x%04x  " NONE, offset);
         //0xx  以四位十六进制的方式显示偏移量，如果不足四位的在左边补零，如0x0000--0x0010
         size_t n = size - offset;
         if (n > 16) {
@@ -45,7 +45,7 @@ void hexDump(const void *_data, size_t size) {
             }
 
             if (offset + i < size) {
-                printf("%02x ", data[offset + i]); // x以两位十六进制的方式输出内容
+                printf(CYAN "%02x " NONE, data[offset + i]); // x以两位十六进制的方式输出内容
             } else {
                 printf("   "); //如果数据已经不足16个，则以空格表示，以便对齐
             }
@@ -55,7 +55,7 @@ void hexDump(const void *_data, size_t size) {
 
         for (size_t i = 0; i < n; ++i) {
             if (isprint(data[offset + i])) {
-                printf("%c", data[offset + i]);
+                printf(CYAN "%c" NONE, data[offset + i]);
             } else {
                 printf(".");
             }
