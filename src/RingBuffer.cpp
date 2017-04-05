@@ -140,3 +140,43 @@ int RingBuffer::findSymbol(char symbol){
 	
 
 }
+
+int RingBuffer::findSymbol(const char *symbol){
+	const char *delim;
+	int result = 0;
+	int tmpOutputData = 0;
+	char *targetAddress = 0;
+	int canFindSize=0;
+	int realFindIndex; 
+	delim = symbol;
+	if(delim == NULL)ASSERT("EMPTY pointer!");
+	if(mBufferBegin == NULL)ASSERT("buffer uninited");
+	tmpOutputData = mOutputedData;
+	realFindIndex = mOutputedData & ( mBufferSize -1 );   //get real data out index
+	targetAddress = mBufferBegin+realFindIndex;
+	canFindSize = availableRead();
+	//TRACE("tmpOutputData:%d",tmpOutputData);
+	//TRACE("realFindIndex:%d",realFindIndex);
+	do{
+
+		targetAddress = mBufferBegin+realFindIndex;
+		delim = symbol;
+//		TRACE("target:%c,result:%d, canFindSize:%d", *targetAddress, result,canFindSize);
+		do{
+			if(*targetAddress == *delim){
+//			TRACE("symbol:%c, target:%c", symbol, *targetAddress);
+			//TRACE("result:%d, canFindSize:%d",result, canFindSize);
+			return result+1;
+			}
+		}while(*(++delim) != 0);
+
+		result++;	
+		realFindIndex = (tmpOutputData + result)  & ( mBufferSize -1 );   //get real data out index
+		canFindSize--;
+	}while(canFindSize > 0);
+	//TRACE("symbol:%c, target:%c", symbol, *targetAddress);
+	//TRACE("result:%d, canFindSize:%d", result, canFindSize);
+	return 0;
+	
+
+}

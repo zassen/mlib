@@ -28,6 +28,7 @@ class RingBuffer
 		int read(void *data, int count);  //read data frome ringbuffer
 		int write(const void *data, int count);
 		int findSymbol(char symbol);
+		int findSymbol(const char *symbol);
 		int size();
 
 	private:
