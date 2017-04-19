@@ -30,6 +30,7 @@ class RingBuffer
 		unsigned char getEntry(int offset);
 		int findSymbol(char symbol);
 		int findSymbol(const char *symbol);
+		int readLine(const char *delim, void *data);
 		int size();
 
 	private:

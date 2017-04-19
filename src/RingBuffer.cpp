@@ -158,6 +158,27 @@ int RingBuffer::findSymbol(char symbol){
 
 }
 
+
+int RingBuffer::readLine(const char *delim, void *data){
+	int len =0;
+	char garbage;	
+	char *pData = NULL;
+	pData = (char *)data;
+	len = findSymbol(delim);
+	if(len == 0){
+
+		read(&garbage, 1);
+	}
+	if(len > 0){
+
+		len = read(pData,len+1);
+		return len;
+	}
+
+	return -1;
+
+}
+
 int RingBuffer::findSymbol(const char *symbol){
 	const char *delim;
 	int result = 0;
