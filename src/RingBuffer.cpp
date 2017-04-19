@@ -73,6 +73,23 @@ int RingBuffer::read(void *data, int count)
 
 }
 
+unsigned char RingBuffer::getEntry(int offset){
+	
+	int targetOutput=0;
+	int tmpCanRead=0;
+	unsigned char result =0;
+	if(mBufferBegin == NULL)ASSERT("buffer uninited");
+
+	tmpCanRead = availableRead();
+	if(offset > tmpCanRead)return 0;// ASSERT("can't reach buffer area, offset:%d, size:%d", offset, tmpCanRead);
+	TRACE("Buffer entry, mOutputedData:%d, offset:%d", mOutputedData, offset);
+	targetOutput = (mOutputedData + offset) & ( mBufferSize -1 );   //get real data out index
+	TRACE("Buffer entry, targetOutput:%d", targetOutput);
+	result = *(mBufferBegin + targetOutput);
+	TRACE("result :%x", result);
+	return result;
+}
+
 /**
 * @brief RingBuffer::write
 * @param 数据地址
@@ -128,7 +145,7 @@ int RingBuffer::findSymbol(char symbol){
 		if(*targetAddress == symbol){
 //			TRACE("symbol:%c, target:%c", symbol, *targetAddress);
 			//TRACE("result:%d, canFindSize:%d",result, canFindSize);
-			return result+1;
+			return result;
 		}
 		result++;	
 		realFindIndex = (tmpOutputData + result)  & ( mBufferSize -1 );   //get real data out index
@@ -136,7 +153,7 @@ int RingBuffer::findSymbol(char symbol){
 	}while(canFindSize > 0);
 	//TRACE("symbol:%c, target:%c", symbol, *targetAddress);
 	//TRACE("result:%d, canFindSize:%d", result, canFindSize);
-	return 0;
+	return -1;
 	
 
 }
@@ -166,7 +183,7 @@ int RingBuffer::findSymbol(const char *symbol){
 			if(*targetAddress == *delim){
 //			TRACE("symbol:%c, target:%c", symbol, *targetAddress);
 			//TRACE("result:%d, canFindSize:%d",result, canFindSize);
-			return result+1;
+			return result;
 			}
 		}while(*(++delim) != 0);
 
@@ -176,7 +193,7 @@ int RingBuffer::findSymbol(const char *symbol){
 	}while(canFindSize > 0);
 	//TRACE("symbol:%c, target:%c", symbol, *targetAddress);
 	//TRACE("result:%d, canFindSize:%d", result, canFindSize);
-	return 0;
+	return -1;
 	
 
 }

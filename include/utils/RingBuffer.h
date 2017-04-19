@@ -27,6 +27,7 @@ class RingBuffer
 		int availableWrite();   //how much can write
 		int read(void *data, int count);  //read data frome ringbuffer
 		int write(const void *data, int count);
+		unsigned char getEntry(int offset);
 		int findSymbol(char symbol);
 		int findSymbol(const char *symbol);
 		int size();

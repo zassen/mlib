@@ -33,6 +33,7 @@ struct Message{
 		mWhat = what;
 	}
 	int mWhat;
+	int argc[3];
 	string mStr;
 	char mData[128];
 	int mDataSize;
