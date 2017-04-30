@@ -27,7 +27,7 @@ public:
 		messageHandler(message);
 	};
 	virtual int handleEvent(int fd, int ident, int events, void* data) ;
-	bool threadLoop();
+	virtual bool threadLoop();
 	virtual bool threadWork(){
 		INFO("Handler threadWork runing");
 		return 1;} 
