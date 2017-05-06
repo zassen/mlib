@@ -18,11 +18,13 @@ struct Message{
 	Message():mWhat(0){}
 	Message(int what):mWhat(what) {}
 	Message(string str):mStr(str){}
-	void setData(const char *data,int len){
+	void setData(const void *data,int len){
+		char *pData = NULL;
+		pData = (char *)data;
 		memset(&mData,0,128);
 		if(data != NULL){
 
-			memcpy(&mData,data,len);
+			memcpy(&mData,pData,len);
 			mDataSize = len;
 		}
 	}

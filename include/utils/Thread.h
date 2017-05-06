@@ -74,6 +74,7 @@ public:
     // Indicates whether this thread is running or not.
             bool        isRunning() const;
 
+    volatile bool           mExitPending;
 #ifdef HAVE_ANDROID_OS
     // Return the thread's kernel ID, same as the thread itself calling gettid() or
     // androidGetTid(), or -1 if the thread is not running.
@@ -101,7 +102,7 @@ private:
             Condition       mThreadExitedCondition;
             status_t        mStatus;
     // note that all accesses of mExitPending and mRunning need to hold mLock
-    volatile bool           mExitPending;
+    //volatile bool           mExitPending;
     volatile bool           mRunning;
             //sp<Thread>      mHoldSelf;
 #ifdef HAVE_ANDROID_OS
