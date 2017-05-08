@@ -32,6 +32,8 @@ class RingBuffer
 		int findSymbol(const char *symbol);
 		int readLine(const char *delim, void *data);
 		int size();
+		void dumpBuffer();
+		int dummyRead(void *data, int count);// get data but never update count
 
 	private:
 		int mBufferSize;       //buffer size

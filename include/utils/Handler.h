@@ -45,6 +45,7 @@ public:
 	void timeoutHandler(MlooperTimeoutHandler *handler){
 		mMlooper->setTimeoutHandler(handler);
 	}
+	int errorCnt;
 private:
 
 protected:

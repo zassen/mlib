@@ -52,6 +52,30 @@ int RingBuffer::availableWrite()
 * @param 读的字节数
 * @return
 */
+
+int RingBuffer::dummyRead(void *data, int count){
+
+	int tailLen=0;
+	int realOutput=0;
+	int tmpCanRead=0;
+	if(mBufferBegin == NULL)ASSERT("buffer uninited");
+	if(NULL == data)ASSERT("Input data is unavailable");
+	tmpCanRead = availableRead();
+	count =min(count,tmpCanRead);
+	realOutput = mOutputedData & ( mBufferSize -1 );   //get real data out index
+	tailLen = mBufferSize - realOutput;
+	tailLen = min( count, tailLen );
+	memcpy( (char*)data, mBufferBegin+realOutput, tailLen);
+	memcpy( (char*)data+tailLen, mBufferBegin, count-tailLen);
+	//mOutputedData += count;
+	TRACE("read data count:%d",count);
+	return count;
+	
+
+
+
+}
+
 int RingBuffer::read(void *data, int count)
 {
 	int tailLen=0;
@@ -73,6 +97,17 @@ int RingBuffer::read(void *data, int count)
 
 }
 
+void RingBuffer::dumpBuffer(){
+	char tmpBuf[128]={0};
+	int tmpSize = availableRead();
+	int count=0;
+	count = min(128,tmpSize);
+	count = dummyRead(tmpBuf,count);
+	TRACE("DUMP RING BUFFER DATA, size:%d, dump size:%d",tmpSize, count);
+	DUMPHEX(tmpBuf,count);
+
+
+}
 unsigned char RingBuffer::getEntry(int offset){
 	
 	int targetOutput=0;

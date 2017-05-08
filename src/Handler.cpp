@@ -3,7 +3,7 @@
 using namespace mlib;
 using namespace std;
 
-Handler::Handler(string name):mName(name),mTimeoutMillis(10000),mMlooper(NULL){
+Handler::Handler(string name):mName(name),mTimeoutMillis(10000),mMlooper(NULL),errorCnt(0){
 
 }
 
